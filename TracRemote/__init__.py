@@ -1,11 +1,12 @@
 # Licensed under a 3-clause BSD style license - see LICENSE.rst
 # -*- coding: utf-8 -*-
 """
-===========
-trac-remote
-===========
+==========
+TracRemote
+==========
 
-A mechanism to manipulate remote Trac instances similar to trac-admin_.
+This package provides a mechanism to manipulate remote
+Trac instances similar to trac-admin_.
 
 .. _Trac: http://trac.edgewall.org
 .. _trac-admin: http://trac.edgewall.org/wiki/TracAdmin
