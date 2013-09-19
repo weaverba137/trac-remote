@@ -15,6 +15,7 @@ A mechanism to manipulate remote Trac instances similar to trac-admin_.
 #
 from connection import connection
 from CRLF import CRLF
+from main import main
 from SimpleAttachmentHTMLParser import SimpleAttachmentHTMLParser
 from SimpleIndexHTMLParser import SimpleIndexHTMLParser
 from SimpleWikiHTMLParser import SimpleWikiHTMLParser

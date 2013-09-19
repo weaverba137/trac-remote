@@ -1,0 +1,7 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""Runs the trac-remote.main function."""
+#
+from trac-remote import main
+#
+main()
