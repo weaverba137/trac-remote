@@ -6,7 +6,7 @@ TracRemote
 ==========
 
 This package provides a mechanism to manipulate remote
-Trac instances similar to trac-admin_.
+Trac_ instances similar to trac-admin_.
 
 .. _Trac: http://trac.edgewall.org
 .. _trac-admin: http://trac.edgewall.org/wiki/TracAdmin
