@@ -358,7 +358,7 @@ class connection(object):
                 extra = '/'+'/'.join(foo[1:])
             else:
                 extra = ''
-            http = HTTPSConnection(hostname)
+            http = HTTPConnection(hostname)
         headers = { 'Cookie':'; '.join(['='.join(c) for c in self._cookies]),
             'Content-Type':content_header}
         if self._realm is not None:
