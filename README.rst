@@ -18,5 +18,5 @@ the repository is http://github.com/weaverba137/trac-remote .
 
 
 .. _Trac: http://trac.edgewall.org
-.. _SDSS-III: http://www.sdss3.org/
+.. _SDSS-III: http://www.sdss3.org
 .. _`svn repository`: http://www.sdss3.org/dr10/software/products.php
