@@ -30,6 +30,7 @@ class connection(object):
         debug : bool, optional
             If set to ``True``, print more information.
         """
+        from . import SimpleWikiHTMLParser
         self._realm = realm
         self._debug = debug
         #
