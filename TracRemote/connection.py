@@ -3,6 +3,7 @@
 import cookielib
 from urllib import unquote, urlencode
 import urllib2
+from . import SimpleWikiHTMLParser
 #
 #
 #
@@ -31,7 +32,6 @@ class connection(object):
         debug : bool, optional
             If set to ``True``, print more information.
         """
-        from . import SimpleWikiHTMLParser
         self._realm = realm
         self._debug = debug
         #
