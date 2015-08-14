@@ -1,9 +1,13 @@
 # Licensed under a 3-clause BSD style license - see LICENSE.rst
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import
 import cookielib
 from urllib import unquote, urlencode
 import urllib2
-from . import SimpleWikiHTMLParser
+from .SimpleWikiHTMLParser import SimpleWikiHTMLParser
+from .SimpleIndexHTMLParser import SimpleIndexHTMLParser
+from .CRLF import CRLF
+from .SimpleAttachmentHTMLParser import SimpleAttachmentHTMLParser
 #
 #
 #
@@ -155,7 +159,6 @@ class connection(object):
         index : list
             A list of all Trac wiki pages.
         """
-        from . import SimpleIndexHTMLParser
         response = self.opener.open(self.url+"/wiki/TitleIndex")
         titleindex = response.read()
         response.close()
@@ -207,7 +210,6 @@ class connection(object):
         -------
         None
         """
-        from . import CRLF
         response = self.opener.open(self.url+"/wiki/"+pagepath+"?action=edit")
         if self._debug:
             print(response.info())
@@ -245,7 +247,6 @@ class connection(object):
             sub-dictionaries that contain the size and mtime of the file.
             If there are no attachments, the dictionary will be empty.
         """
-        from . import SimpleAttachmentHTMLParser
         response = self.opener.open(self.url+"/attachment/wiki/"+pagepath+"/")
         attachmentindex = response.read()
         response.close()
