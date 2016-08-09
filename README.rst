@@ -2,6 +2,25 @@
 trac-remote
 ===========
 
+Status
+------
+
+.. .. image:: https://img.shields.io/pypi/l/pydl.svg
+..     :target: https://pypi.python.org/pypi/pydl
+..     :alt: License
+
+.. image:: https://img.shields.io/travis/weaverba137/trac-remote.svg
+    :target: https://travis-ci.org/weaverba137/trac-remote
+    :alt: Travis Build Status
+
+.. image:: https://coveralls.io/repos/weaverba137/trac-remote/badge.svg?branch=master&service=github
+    :target: https://coveralls.io/github/weaverba137/trac-remote?branch=master
+    :alt: Test Coverage Status
+
+.. image:: https://readthedocs.org/projects/trac-remote/badge/?version=latest
+    :target: http://trac-remote.readthedocs.io/en/latest/
+    :alt: Documentation Status
+
 Description
 -----------
 
@@ -21,13 +40,9 @@ the repository is http://github.com/weaverba137/trac-remote .
 .. _SDSS-III: http://www.sdss3.org
 .. _`svn repository`: http://www.sdss3.org/dr10/software/products.php
 
-Status
-------
 
-.. image:: https://img.shields.io/travis/weaverba137/trac-remote.svg
-    :target: https://travis-ci.org/weaverba137/trac-remote
-    :alt: Travis Build Status
+License
+-------
 
-.. image:: https://coveralls.io/repos/weaverba137/trac-remote/badge.svg?branch=master&service=github
-    :target: https://coveralls.io/github/weaverba137/trac-remote?branch=master
-    :alt: Test Coverage Status
+trac-remote is free software licensed under a 3-clause BSD-style license.
+For details see the ``LICENSE.rst`` file.
