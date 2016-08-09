@@ -7,14 +7,19 @@ TracRemote.tests.test_util
 
 Test functions and classes in the util module.
 """
-from __future__ import absolute_import, division, print_function, unicode_literals
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
 import unittest
 from ..util import CRLF
+
 
 class TestUtil(unittest.TestCase):
 
     def test_CRLF(self):
+        """Test the CRLF function.
+        """
         text = "\n\n\nThis text\nContains\n\nUnix line-endings\n\n"
         crlf_text = CRLF(text)
         self.assertEqual(crlf_text,
-                         "This text\r\nContains\r\n\r\nUnix line-endings\r\n\r\n")
+                         ("This text\r\nContains\r\n\r\n" +
+                          "Unix line-endings\r\n\r\n"))

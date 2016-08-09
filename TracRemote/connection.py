@@ -24,7 +24,8 @@ class connection(object):
     opener : urllib2.OpenerDirector
         An object than can be used to open URLs.
     """
-    def __init__(self,url=None,passfile=None,realm=None,debug=False):
+
+    def __init__(self, url=None, passfile=None, realm=None, debug=False):
         """Set up the Trac connection.
 
         Parameters

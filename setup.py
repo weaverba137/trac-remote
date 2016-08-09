@@ -18,7 +18,8 @@ from setuptools import setup, find_packages
 #
 setup_keywords = dict()
 setup_keywords['name'] = 'TracRemote'
-setup_keywords['description'] = 'Allows remote manipulation of Trac servers, similar to trac-admin.'
+setup_keywords['description'] = ('Allows remote manipulation of Trac ' +
+                                 'servers, similar to trac-admin.')
 setup_keywords['author'] = 'Benjamin Alan Weaver'
 setup_keywords['author_email'] = 'baweaver@lbl.gov'
 setup_keywords['license'] = 'BSD'
@@ -45,11 +46,13 @@ setup_keywords['use_2to3'] = True
 setup_keywords['packages'] = find_packages()
 # setup_keywords['package_dir'] = {'':'py'}
 setup_keywords['cmdclass'] = {'sdist': DistutilsSdist}
-setup_keywords['test_suite'] = '{name}.tests.{name}_test_suite.{name}_test_suite'.format(**setup_keywords)
+setup_keywords['test_suite'] = ('{name}.tests.{name}_test_suite.' +
+                                '{name}_test_suite').format(**setup_keywords)
 #
 # Autogenerate command-line scripts.
 #
-setup_keywords['entry_points'] = {'console_scripts':['trac-remote = TracRemote.main:main']}
+setup_keywords['entry_points'] = {'console_scripts':
+                                  ['trac-remote = TracRemote.main:main']}
 #
 # Add internal data directories.
 #

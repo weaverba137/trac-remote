@@ -7,6 +7,8 @@ TracRemote.util
 
 Utility functions and classes for internal use by the TracRemote package.
 """
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
 from HTMLParser import HTMLParser
 
 
@@ -25,7 +27,8 @@ def CRLF(text):
         Input text converted to CRLF line endings.  Any initial blank lines
         are also removed.
     """
-    crlf_text = text.replace( "\r\n", "\n" ).replace( "\r", "\n" ).replace( "\n", "\r\n" )
+    crlf_text = text.replace("\r\n", "\n").replace("\r", "\n").replace("\n",
+                                                                       "\r\n")
     while crlf_text[:2] == "\r\n":
         crlf_text = crlf_text[2:]
     return crlf_text
@@ -53,7 +56,7 @@ class SimpleAttachmentHTMLParser(HTMLParser):
                     try:
                         if dattrs['title'] == 'View attachment':
                             self.current_attachment = dattrs['href'].split('/')[-1]
-                            self.attachments[self.current_attachment] = {'size':0,'mtime':''}
+                            self.attachments[self.current_attachment] = {'size': 0, 'mtime': ''}
                         else:
                             mtime = dattrs['title'].split(' ')[0]
                             self.attachments[self.current_attachment]['mtime'] = mtime
@@ -107,17 +110,17 @@ class SimpleIndexHTMLParser(HTMLParser):
     def __init__(self):
         HTMLParser.__init__(self)
         self.found_h1 = None
-        self.h1_attr = {'h1':'id','div':'class'}
-        self.h1_id = {'h1':'TitleIndex','div':'titleindex'}
+        self.h1_attr = {'h1': 'id', 'div': 'class'}
+        self.h1_id = {'h1': 'TitleIndex', 'div': 'titleindex'}
         self.TitleIndex = list()
         return
 
     def handle_starttag(self, tag, attrs):
         if self.found_h1 is not None:
             if tag == 'a':
-                self.TitleIndex.append(attrs[0][1].replace('/wiki/',''))
+                self.TitleIndex.append(attrs[0][1].replace('/wiki/', ''))
         else:
-            if tag == 'h1' or tag =='div':
+            if tag == 'h1' or tag == 'div':
                 #
                 # Search for the id
                 #
