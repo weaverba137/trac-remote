@@ -11,21 +11,9 @@ Trac_ instances similar to trac-admin_.
 .. _Trac: http://trac.edgewall.org
 .. _trac-admin: http://trac.edgewall.org/wiki/TracAdmin
 """
-#
-#
-#
 from __future__ import absolute_import, unicode_literals
-#
-#
-#
 from .connection import connection
-from .CRLF import CRLF
-from .main import main
-from .SimpleAttachmentHTMLParser import SimpleAttachmentHTMLParser
-from .SimpleIndexHTMLParser import SimpleIndexHTMLParser
-from .SimpleWikiHTMLParser import SimpleWikiHTMLParser
-#
-#
-#
+
+
 __all__ = [ 'connection' ]
 __version__ = '0.0.2.dev1'

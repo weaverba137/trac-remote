@@ -1,16 +1,19 @@
 # Licensed under a 3-clause BSD style license - see LICENSE.rst
 # -*- coding: utf-8 -*-
-from __future__ import print_function
-#
+from __future__ import absolute_import, division, print_function, unicode_literals
+
+
 def main():
-    """Main entry point for the trac-remote script."""
+    """Main entry point for the trac-remote script.
+
+    Returns
+    -------
+    :class:`int`
+        An integer suitable for passing to :func:`sys.exit`.
+    """
+    import argparse
     description = """Foo Bar"""
-    try:
-        import argparse
-        parser = argparse.ArgumentParser(description=description)
-    except ImportError:
-        import optparse
-        parser = optparse.OptionParser(usage=description)
+    parser = argparse.ArgumentParser(description=description)
     parser.parse_args()
     print("Foo Bar")
-    return
+    return 0
