@@ -9,7 +9,10 @@ Utility functions and classes for internal use by the TracRemote package.
 """
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
-from HTMLParser import HTMLParser
+try:
+    from html.parser import HTMLParser
+except ImportError:
+    from HTMLParser import HTMLParser
 
 
 def CRLF(text):
