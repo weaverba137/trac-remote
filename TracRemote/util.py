@@ -63,7 +63,9 @@ class SimpleAttachmentHTMLParser(HTMLParser):
                             self.current_attachment = ca
                             self.attachments[self.current_attachment] = a
                         else:
-                            mtime = dattrs['title'].split(' ')[0]
+                            # TODO: fix mtime parsing.
+                            # mtime = dattrs['title'].split(' ')[0]
+                            mtime = dattrs['href']
                             foo = self.attachments[self.current_attachment]
                             foo['mtime'] = mtime
                     except KeyError:

@@ -76,8 +76,7 @@ setup_keywords['entry_points'] = {'console_scripts':
 #
 # Add internal data directories.
 #
-# setup_keywords['package_data'] = {'TracRemote': ['data/*'],
-#                                   'TracRemote.tests': ['t/*']}
+setup_keywords['package_data'] = {'TracRemote.tests': ['t/*']}
 #
 # Run setup command.
 #
