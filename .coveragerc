@@ -1,0 +1,28 @@
+[run]
+source = TracRemote
+omit =
+   TracRemote/_version.py
+   TracRemote/conftest*
+   TracRemote/cython_version*
+   TracRemote/setup_package*
+   TracRemote/*/setup_package*
+   TracRemote/*/*/setup_package*
+   TracRemote/sphinx/*
+   TracRemote/tests/*
+   TracRemote/*/tests/*
+   TracRemote/*/*/tests/*
+
+[report]
+exclude_lines =
+   # Have to re-enable the standard pragma
+   pragma: no cover
+
+   # Don't complain about packages we have installed
+   except ImportError
+
+   # Don't complain if tests don't hit assertions
+   raise AssertionError
+   raise NotImplementedError
+
+   # Don't complain about script hooks
+   def main\(.*\):
