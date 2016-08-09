@@ -13,7 +13,7 @@ Status
     :target: https://travis-ci.org/weaverba137/trac-remote
     :alt: Travis Build Status
 
-.. image:: https://coveralls.io/repos/weaverba137/trac-remote/badge.svg?branch=master&service=github
+.. image:: https://coveralls.io/repos/github/weaverba137/trac-remote/badge.svg?branch=master
     :target: https://coveralls.io/github/weaverba137/trac-remote?branch=master
     :alt: Test Coverage Status
 
