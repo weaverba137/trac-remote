@@ -57,7 +57,7 @@ matrix:
         # Coverage test, pass the results to coveralls.
         - os: linux
           python: 2.7
-          env: MAIN_COMMAND='coverage' SETUP_CMD='run TracRemote/tests/TracRemote_test_suite.py'
+          env: MAIN_CMD='coverage' SETUP_CMD='run TracRemote/tests/TracRemote_test_suite.py'
 
         # Do a PEP8 test
         - os: linux
