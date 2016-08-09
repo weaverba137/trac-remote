@@ -1,14 +1,9 @@
+include LICENSE.rst
 include README.rst
 
-include distribute_setup.py
-recursive-include TracRemote *.pyx *.c
+graft doc
 
-recursive-include docs *
-recursive-include licenses *
-recursive-include cextern *
-recursive-include scripts *
-
-exclude *.pyc *.o
-prune docs/_build
 prune build
-
+prune dist
+prune htmlcov
+prune doc/_build
