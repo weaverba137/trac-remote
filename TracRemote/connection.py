@@ -1,16 +1,19 @@
 # Licensed under a 3-clause BSD style license - see LICENSE.rst
 # -*- coding: utf-8 -*-
+"""
+=====================
+TracRemote.connection
+=====================
+
+Contains a class for establishing and using connections to Trac servers.
+"""
 from __future__ import absolute_import
 import cookielib
 from urllib import unquote, urlencode
 import urllib2
-from .SimpleWikiHTMLParser import SimpleWikiHTMLParser
-from .SimpleIndexHTMLParser import SimpleIndexHTMLParser
-from .CRLF import CRLF
-from .SimpleAttachmentHTMLParser import SimpleAttachmentHTMLParser
-#
-#
-#
+from .util import CRLF, SimpleAttachmentHTMLParser, SimpleIndexHTMLParser, SimpleWikiHTMLParser
+
+
 class connection(object):
     """A representation of the connection to Trac.
 
