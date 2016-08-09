@@ -55,11 +55,14 @@ class SimpleAttachmentHTMLParser(HTMLParser):
                 if tag == 'a':
                     try:
                         if dattrs['title'] == 'View attachment':
-                            self.current_attachment = dattrs['href'].split('/')[-1]
-                            self.attachments[self.current_attachment] = {'size': 0, 'mtime': ''}
+                            ca = dattrs['href'].split('/')[-1]
+                            a = {'size': 0, 'mtime': ''}
+                            self.current_attachment = ca
+                            self.attachments[self.current_attachment] = a
                         else:
                             mtime = dattrs['title'].split(' ')[0]
-                            self.attachments[self.current_attachment]['mtime'] = mtime
+                            foo = self.attachments[self.current_attachment]
+                            foo['mtime'] = mtime
                     except KeyError:
                         pass
                 if tag == 'span':

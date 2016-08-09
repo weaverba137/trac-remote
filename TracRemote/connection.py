@@ -11,7 +11,8 @@ from __future__ import absolute_import
 import cookielib
 from urllib import unquote, urlencode
 import urllib2
-from .util import CRLF, SimpleAttachmentHTMLParser, SimpleIndexHTMLParser, SimpleWikiHTMLParser
+from .util import (CRLF, SimpleAttachmentHTMLParser, SimpleIndexHTMLParser,
+                   SimpleWikiHTMLParser)
 
 
 class connection(object):
@@ -30,14 +31,14 @@ class connection(object):
 
         Parameters
         ----------
-        url : str
+        url : :class:`str`
             The base URL of the Trac server.
-        passfile : str, optional
+        passfile : :class:`str`, optional
             A file containing username and password.  Overrides ~/.netrc
-        realm : str, optional
+        realm : :class:`str`, optional
             If the Trac instance uses basic or digest authentication, set this
             to the authentication realm
-        debug : bool, optional
+        debug : :class:`bool`, optional
             If set to ``True``, print more information.
         """
         self._realm = realm
@@ -45,11 +46,12 @@ class connection(object):
         #
         # Cookies are necessary to maintain connection during script.
         #
-        # Taken from: http://www.voidspace.org.uk/python/articles/cookielib.shtml
+        # Taken from:
+        # http://www.voidspace.org.uk/python/articles/cookielib.shtml
         #
         cj = cookielib.LWPCookieJar()
         self.opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
-        #urllib2.install_opener(opener)
+        # urllib2.install_opener(opener)
         #
         # Handle login
         #
@@ -57,35 +59,39 @@ class connection(object):
             raise ValueError("A Trac URL is required!")
         self.url = url
         foo = self.url.split('/')
-        self._baseurl = foo[0]+'//'+foo[2]
+        self._baseurl = foo[0] + '//' + foo[2]
         if passfile is None:
             user, password = self._readPasswordNetrc(self._baseurl)
         else:
             user, password = self._readPassword(passfile)
         if password is None:
-            raise ValueError('Could not find a password for {0}!'.format(self.url))
+            raise ValueError(('Could not find a password for ' +
+                              '{0}!').format(self.url))
         parser = SimpleWikiHTMLParser()
         if self._realm is not None:
             auth_handler = urllib2.HTTPDigestAuthHandler()
             auth_handler.add_password(realm=self._realm,
-                uri=self.url,user=user,passwd=password)
+                                      uri=self.url,
+                                      user=user,
+                                      passwd=password)
             self.opener.add_handler(auth_handler)
-        response = self.opener.open(self.url+"/login")
+        response = self.opener.open(self.url + "/login")
         if self._debug:
             print(response.info())
         parser.feed(response.read())
         response.close()
         self._form_token = parser.search_value
         if self._realm is None:
-            postdata = {'user':user,'password':password,
-                '__FORM_TOKEN':self._form_token,
-                'referer':''}
+            postdata = {'user': user,
+                        'password': password,
+                        '__FORM_TOKEN': self._form_token,
+                        'referer': ''}
             #
             # The cookie named 'trac_auth' is obtained after the POST to the
             # login page but before the redirect to the wiki front page.
             # Technically it is obtained in the HTTP headers of the redirect.
             #
-            response = self.opener.open(self.url+"/login",urlencode(postdata))
+            response = self.opener.open(self.url+"/login", urlencode(postdata))
             if self._debug:
                 print(response.info())
             response.close()
@@ -97,42 +103,39 @@ class connection(object):
             if cookie.name == 'trac_form_token' and self._form_token is None:
                 self._form_token = cookie.value
         return
-    #
-    #
-    #
-    def _readPassword(self,passfile):
+
+    def _readPassword(self, passfile):
         """Read the password file & return the username & password.
 
         Parameters
         ----------
-        passfile : str
+        passfile : :class:`str`
             File containing Trac username and password.
 
         Returns
         -------
-        ReadPassword : tuple
+        :func:`tuple`
             A tuple containing the username and password.
         """
-        passf= open(passfile, 'r')
-        user = (passf.readline()).strip()
-        password= (passf.readline()).strip()
-        passf.close()
+        with open(passfile, 'r') as pf:
+            user = (pf.readline()).strip()
+            password = (pf.readline()).strip()
         return (user, password)
-    #
-    #
-    #
-    def _readPasswordNetrc(self,url):
+
+    def _readPasswordNetrc(self, url):
         """Read the Trac username and password from a .netrc file.
 
         Parameters
         ----------
-        url : str
+        url : :class:`str`
             URL of the Trac server
+
         Returns
         -------
-        ReadPasswordNetrc : tuple
-            A tuple containing the username and password.  If there is no .netrc file,
-            or if the Trac server is not present, returns ``None``.
+        :func:`tuple`
+            A tuple containing the username and password.  If there is no
+            .netrc file, or if the Trac server is not present,
+            returns ``None``.
         """
         from netrc import netrc
         try:
@@ -148,71 +151,58 @@ class connection(object):
         except KeyError:
             return None
         return (user, password)
-    #
-    #
-    #
+
     def index(self):
         """Get and parse the TitleIndex page.
 
-        Parameters
-        ----------
-        None
-
         Returns
         -------
-        index : list
+        index : :class:`list`
             A list of all Trac wiki pages.
         """
-        response = self.opener.open(self.url+"/wiki/TitleIndex")
+        response = self.opener.open(self.url + "/wiki/TitleIndex")
         titleindex = response.read()
         response.close()
         parser = SimpleIndexHTMLParser()
         parser.feed(titleindex)
         return parser.TitleIndex
-    #
-    #
-    #
-    def get(self,pagepath):
+
+    def get(self, pagepath):
         """Requests a wiki page in text format.
 
         Parameters
         ----------
-        pagepath : str
-            wiki page to grab.
+        pagepath : :class:`str`
+            Wiki page to grab.
 
         Returns
         -------
-        getText : str
-            The text of the wiki page.  Note that in some cases, the text of the page
-            may contain UTF-8 characters, so a further conversion to unicode may
-            be warranted. The text may also contain Windows (CRLF) line endings.
+        :class:`str`
+            The text of the wiki page.  Note that in some cases, the text of
+            the page may contain UTF-8 characters, so a further conversion to
+            unicode may be warranted. The text may also contain Windows
+            (CRLF) line endings.
         """
         response = self.opener.open(self.url+"/wiki/"+pagepath+"?format=txt")
         txt = response.read()
         response.close()
-        #try:
-        #    utxt = unicode(txt,'utf-8')
-        #except UnicodeDecodeError:
-        #    return txt
+        # try:
+        #     utxt = unicode(txt,'utf-8')
+        # except UnicodeDecodeError:
+        #     return txt
         return txt
-    #
-    #
-    #
-    def set(self,pagepath,text,comment=None):
+
+    def set(self, pagepath, text, comment=None):
         """Inputs text into the wiki input text box.
 
         Parameters
         ----------
-        pagepath : str
-            wiki page to update.
-        text : str
+        pagepath : :class:`str`
+            Wiki page to update.
+        text : :class:`str`
             The wiki text.
-        comment : str, optional
+        comment : :class:`str`, optional
             A comment on the change.
-
-        Returns
-        -------
-        None
         """
         response = self.opener.open(self.url+"/wiki/"+pagepath+"?action=edit")
         if self._debug:
@@ -220,33 +210,32 @@ class connection(object):
         parser = SimpleWikiHTMLParser('version')
         parser.feed(response.read())
         response.close()
-        postdata = {'__FORM_TOKEN':self._form_token,
-            'from_editor':'1',
-            'action':'edit',
-            'version':parser.search_value,
-            'save':'Submit changes',
-            'text':CRLF(text)}
+        postdata = {'__FORM_TOKEN': self._form_token,
+                    'from_editor': '1',
+                    'action': 'edit',
+                    'version': parser.search_value,
+                    'save': 'Submit changes',
+                    'text': CRLF(text)}
         if comment is not None:
             postdata['comment'] = CRLF(comment)
         if self._debug:
             print(urlencode(postdata))
-        response = self.opener.open(self.url+"/wiki/"+pagepath,urlencode(postdata))
+        response = self.opener.open(self.url+"/wiki/"+pagepath,
+                                    urlencode(postdata))
         response.close()
         return
-    #
-    #
-    #
-    def attachments(self,pagepath):
+
+    def attachments(self, pagepath):
         """Return a list of files attached to a particular page.
 
         Parameters
         ----------
-        pagepath : str
-            wiki page to attach to.
+        pagepath : :class:`str`
+            Wiki page to attach to.
 
         Returns
         -------
-        attachments : dict
+        :class:`dict`
             A dictionary where the keys are file names and the values are
             sub-dictionaries that contain the size and mtime of the file.
             If there are no attachments, the dictionary will be empty.
@@ -257,35 +246,31 @@ class connection(object):
         parser = SimpleAttachmentHTMLParser()
         parser.feed(attachmentindex)
         return parser.attachments
-    #
-    #
-    #
-    def attach(self,pagepath,filename,description=None,replace=False):
+
+    def attach(self, pagepath, filename, description=None, replace=False):
         """Attaches a file to a wiki page.
 
         Parameters
         ----------
-        pagepath : str
-            wiki page to attach to.
-        filename : str or tuple
+        pagepath : :class:`str`
+            Wiki page to attach to.
+        filename : :class:`str` or :func:`tuple`
             Name of the file to attach.  If a tuple is passed, the first item
             should be the name of the file, & the second item should be the
             data that the file should contain.
-        description : str, optional
-            If supplied, this description will be added as a comment on the attachment.
-        replace : bool, optional
+        description : :class:`str`, optional
+            If supplied, this description will be added as a comment on the
+            attachment.
+        replace : :class:`bool`, optional
             Set this to ``True`` if the file is replacing an existing file.
-
-        Returns
-        -------
-        None
         """
         from email.mime.multipart import MIMEMultipart
         from email.mime.text import MIMEText
         from httplib import HTTPConnection, HTTPSConnection
         from os.path import basename
         if self._realm is not None:
-            response = self.opener.open(self.url+"/attachment/wiki/"+pagepath+"/?action=new")
+            response = self.opener.open(self.url + "/attachment/wiki/" +
+                                        pagepath + "/?action=new")
             if self._debug:
                 print(response.info())
                 print(response.read())
@@ -293,23 +278,22 @@ class connection(object):
         #
         # Read and examine the file
         #
-        if isinstance(filename,tuple):
+        if isinstance(filename, tuple):
             fname = basename(filename[0])
             fbytes = filename[1]
         else:
-            f = open(filename,'r')
-            fbytes = f.read()
-            f.close()
+            with open(filename, 'r') as f:
+                fbytes = f.read()
             fname = basename(filename)
         #
         # Create the mime sections to hold the form data
         #
         postdata = MIMEMultipart('form-data')
-        postdict = {'__FORM_TOKEN':self._form_token,
-            'action':'new',
-            'realm':'wiki',
-            'id':pagepath,
-            }
+        postdict = {'__FORM_TOKEN': self._form_token,
+                    'action': 'new',
+                    'realm': 'wiki',
+                    'id': pagepath,
+                    }
         if description is not None:
             postdict['description'] = description
         if replace:
@@ -329,7 +313,9 @@ class connection(object):
         # Create a separate mime section for the file by hand.
         #
         payload = ['--'+postdata.get_boundary()]
-        payload.append('Content-disposition: form-data; name="attachment"; filename="{0}"'.format(unquote(fname)))
+        payload.append(('Content-disposition: form-data; ' +
+                        'name="attachment"; ' +
+                        'filename="{0}"').format(unquote(fname)))
         payload.append('Content-type: application/octet-stream')
         payload.append('')
         payload.append(fbytes)
@@ -366,20 +352,26 @@ class connection(object):
             else:
                 extra = ''
             http = HTTPConnection(hostname)
-        headers = { 'Cookie':'; '.join(['='.join(c) for c in self._cookies]),
-            'Content-Type':content_header}
+        headers = {'Cookie': '; '.join(['='.join(c) for c in self._cookies]),
+                   'Content-Type': content_header}
         if self._realm is not None:
             auth_handler = 0
-            while not isinstance(self.opener.handlers[auth_handler],urllib2.HTTPDigestAuthHandler):
+            while not isinstance(self.opener.handlers[auth_handler],
+                                 urllib2.HTTPDigestAuthHandler):
                 auth_handler += 1
+            req = urllib2.Request((self.url + "/attachment/wiki/" + pagepath +
+                                   "/?action=new"), 'foo=bar')
+            req_data = {'realm': self._realm,
+                        'nonce': self.opener.handlers[auth_handler].last_nonce,
+                        'qop': 'auth'}
             auth_string = self.opener.handlers[auth_handler].get_authorization(
-                urllib2.Request(self.url+"/attachment/wiki/"+pagepath+"/?action=new",'foo=bar'),
-                {'realm':self._realm,'nonce':self.opener.handlers[auth_handler].last_nonce,'qop':'auth'})
+                req, req_data)
             if self._debug:
                 print(auth_string)
             # http.putheader('Authorization', 'Digest '+auth_string)
-            headers['Authorization'] = 'Digest '+auth_string
-        http.request('POST',extra+"/attachment/wiki/"+pagepath+"/?action=new",crlf_body,headers)
+            headers['Authorization'] = 'Digest ' + auth_string
+        http.request('POST', extra+"/attachment/wiki/"+pagepath+"/?action=new",
+                     crlf_body, headers)
         #
         # If successful, the initial response should be a redirect.
         #
@@ -390,33 +382,32 @@ class connection(object):
             print(response.read())
         http.close()
         return
-    #
-    #
-    #
-    def detach(self,pagepath,filename,save=True):
+
+    def detach(self, pagepath, filename, save=True):
         """Grab a file attached to a wiki page.
 
         Parameters
         ----------
-        pagepath : str
-            wiki page to attach to.
-        filename : str
+        pagepath : :class:`str`
+            Wiki page to attach to.
+        filename : :class:`str`
             Name of the file to read. The name had better match an
             actual attached file!
-        save : bool, optional
+        save : :class:`bool`, optional
             If set to ``False``, no file will be saved, but the data will still
             be returned.
 
         Returns
         -------
-        detach : str
+        :class:`str`
             The raw data read from the file.
         """
         from os.path import basename
         #
         # Construct url for attachment
         #
-        fullurl = self.url+'/raw-attachment/wiki/'+pagepath+'/'+basename(filename)
+        fullurl = (self.url + '/raw-attachment/wiki/' + pagepath + '/' +
+                   basename(filename))
         #
         # Get the file
         #
@@ -428,7 +419,6 @@ class connection(object):
         #
         if save:
             ff = unquote(filename)
-            f = open(ff,'w')
-            f.write(data)
-            f.close()
+            with open(ff, 'w') as f:
+                f.write(data)
         return data

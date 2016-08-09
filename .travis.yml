@@ -37,6 +37,7 @@ env:
         - MAIN_CMD='python setup.py'
     matrix:
         - SETUP_CMD='egg_info'
+        - SETUP_CMD='test'
 
 matrix:
     # Don't wait for allowed failures.
@@ -48,17 +49,15 @@ matrix:
 
     include:
 
-        # Check for sphinx doc build warnings - we do this first because it
-        # runs for a long time
-        - os: linux
-          python: 2.7
-          env: SETUP_CMD='build_sphinx'
-          # -w is an astropy extension
+        # Check for sphinx doc build warnings.
+        # - os: linux
+        #   python: 2.7
+        #   env: SETUP_CMD='build_sphinx'
 
         # Coverage test, pass the results to coveralls.
-        - os: linux
-          python: 2.7
-          env: MAIN_COMMAND='coverage' SETUP_CMD='run TracRemote/tests/TracRemote_test_suite.py'
+        # - os: linux
+        #   python: 2.7
+        #   env: MAIN_COMMAND='coverage' SETUP_CMD='run TracRemote/tests/TracRemote_test_suite.py'
 
         # Do a PEP8 test
         - os: linux
