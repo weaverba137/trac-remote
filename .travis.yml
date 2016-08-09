@@ -50,9 +50,9 @@ matrix:
     include:
 
         # Check for sphinx doc build warnings.
-        # - os: linux
-        #   python: 2.7
-        #   env: SETUP_CMD='build_sphinx'
+        - os: linux
+          python: 2.7
+          env: SETUP_CMD='build_sphinx'
 
         # Coverage test, pass the results to coveralls.
         - os: linux

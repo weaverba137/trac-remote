@@ -24,7 +24,18 @@ setup_keywords['author'] = 'Benjamin Alan Weaver'
 setup_keywords['author_email'] = 'baweaver@lbl.gov'
 setup_keywords['license'] = 'BSD'
 setup_keywords['url'] = 'https://github.com/weaverba137/trac-remote'
-setup_keywords['version'] = '0.0.2.dev1'
+setup_keywords['keywords'] = ['Trac']
+setup_keywords['classifiers'] = [
+    'Development Status :: 3 - Alpha',
+    'Environment :: Console',
+    'Framework :: Trac',
+    'Intended Audience :: System Administrators',
+    'License :: OSI Approved :: BSD License',
+    'Operating System :: OS Independent',
+    'Programming Language :: Python :: 2.7',
+    'Programming Language :: Python :: 3',
+    'Topic :: Internet :: WWW/HTTP :: Site Management'
+    ]
 #
 # Use README.rst as long_description.
 #
@@ -32,6 +43,15 @@ setup_keywords['long_description'] = ''
 if os.path.exists('README.rst'):
     with open('README.rst') as readme:
         setup_keywords['long_description'] = readme.read()
+#
+# Get version from __init__.py
+#
+try:
+    from importlib import import_module
+    product = import_module(setup_keywords['name'])
+    setup_keywords['version'] = product.__version__
+except ImportError:
+    setup_keywords['version'] = '0.0.1.dev1'
 #
 # Set other keywords for the setup function.  These are automated, & should
 # be left alone unless you are an expert.
@@ -56,8 +76,8 @@ setup_keywords['entry_points'] = {'console_scripts':
 #
 # Add internal data directories.
 #
-# setup_keywords['package_data'] = {'specter': ['data/*'],
-#                                   'specter.test': ['t/*']}
+# setup_keywords['package_data'] = {'TracRemote': ['data/*'],
+#                                   'TracRemote.tests': ['t/*']}
 #
 # Run setup command.
 #
