@@ -15,32 +15,23 @@ from .util import (CRLF, SimpleAttachmentHTMLParser, SimpleIndexHTMLParser,
                    SimpleWikiHTMLParser)
 
 
-class connection(object):
+class Connection(object):
     """A representation of the connection to Trac.
 
-    Attributes
+    Parameters
     ----------
-    url : str
-        The base url of the Trac server.
-    opener : urllib2.OpenerDirector
-        An object than can be used to open URLs.
+    url : :class:`str`
+        The base URL of the Trac server.
+    passfile : :class:`str`, optional
+        A file containing username and password.  Overrides ~/.netrc
+    realm : :class:`str`, optional
+        If the Trac instance uses basic or digest authentication, set this
+        to the authentication realm
+    debug : :class:`bool`, optional
+        If set to ``True``, print more information.
     """
 
     def __init__(self, url=None, passfile=None, realm=None, debug=False):
-        """Set up the Trac connection.
-
-        Parameters
-        ----------
-        url : :class:`str`
-            The base URL of the Trac server.
-        passfile : :class:`str`, optional
-            A file containing username and password.  Overrides ~/.netrc
-        realm : :class:`str`, optional
-            If the Trac instance uses basic or digest authentication, set this
-            to the authentication realm
-        debug : :class:`bool`, optional
-            If set to ``True``, print more information.
-        """
         self._realm = realm
         self._debug = debug
         #
