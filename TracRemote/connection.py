@@ -7,7 +7,7 @@ TracRemote.connection
 
 Contains a class for establishing and using connections to Trac servers.
 """
-from __future__ import absolute_import
+from __future__ import absolute_import, division, print_function
 try:
     from http.cookiejar import LWPCookieJar
 except ImportError:
@@ -16,7 +16,12 @@ try:
     from urllib.parse import unquote, urlencode
 except ImportError:
     from urllib import unquote, urlencode
-import urllib2
+try:
+    from urllib.request import (build_opener, HTTPCookieProcessor,
+                                HTTPDigestAuthHandler, Request)
+except ImportError:
+    from urllib2 import (build_opener, HTTPCookieProcessor,
+                         HTTPDigestAuthHandler, Request)
 from .util import (CRLF, SimpleAttachmentHTMLParser, SimpleIndexHTMLParser,
                    SimpleWikiHTMLParser)
 
@@ -47,8 +52,8 @@ class Connection(object):
         # http://www.voidspace.org.uk/python/articles/cookielib.shtml
         #
         cj = LWPCookieJar()
-        self.opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
-        # urllib2.install_opener(opener)
+        self.opener = build_opener(HTTPCookieProcessor(cj))
+        # install_opener(opener)
         #
         # Handle login
         #
@@ -66,7 +71,7 @@ class Connection(object):
                               '{0}!').format(self.url))
         parser = SimpleWikiHTMLParser()
         if self._realm is not None:
-            auth_handler = urllib2.HTTPDigestAuthHandler()
+            auth_handler = HTTPDigestAuthHandler()
             auth_handler.add_password(realm=self._realm,
                                       uri=self.url,
                                       user=user,
@@ -324,7 +329,7 @@ class Connection(object):
         if self._debug:
             print(crlf_body)
         #
-        # Have to use a raw httplib connection becuase urllib2.urlopen will
+        # Have to use a raw httplib connection becuase urlopen will
         # try to encode the data as application/x-www-form-urlencoded
         #
         if 'https' in self.url:
@@ -354,10 +359,10 @@ class Connection(object):
         if self._realm is not None:
             auth_handler = 0
             while not isinstance(self.opener.handlers[auth_handler],
-                                 urllib2.HTTPDigestAuthHandler):
+                                 HTTPDigestAuthHandler):
                 auth_handler += 1
-            req = urllib2.Request((self.url + "/attachment/wiki/" + pagepath +
-                                   "/?action=new"), 'foo=bar')
+            req = Request((self.url + "/attachment/wiki/" + pagepath +
+                           "/?action=new"), 'foo=bar')
             req_data = {'realm': self._realm,
                         'nonce': self.opener.handlers[auth_handler].last_nonce,
                         'qop': 'auth'}
