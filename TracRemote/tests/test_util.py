@@ -52,6 +52,7 @@ class TestUtil(unittest.TestCase):
         self.assertEqual(f['mtime'], '2014-07-29T06:11:13-06:00')
         self.assertEqual(f['size'], 4246601)
         self.assertEqual(f['comment'], 'carigi talk')
+        self.assertEqual(f['author'], 'carigi')
 
     def test_index_parser(self):
         """Test TitleIndex parsing.

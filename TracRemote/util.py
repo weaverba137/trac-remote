@@ -57,6 +57,7 @@ class SimpleAttachmentHTMLParser(HTMLParser):
         self.found_div = False
         self.div_id = 'attachments'
         self.found_list = False
+        self.found_author = False
         self.found_comment = False
         self.attachments = dict()
         self.current_attachment = None
@@ -73,6 +74,8 @@ class SimpleAttachmentHTMLParser(HTMLParser):
                             a = {'size': 0, 'mtime': None}
                             self.current_attachment = ca
                             self.attachments[self.current_attachment] = a
+                            self.found_author = False
+                            self.found_comment = False
                         elif dattrs['title'] == 'Download':
                             # May want to grab this someday.
                             pass
@@ -92,6 +95,8 @@ class SimpleAttachmentHTMLParser(HTMLParser):
                     except:
                         size = 0
                     self.attachments[self.current_attachment]['size'] = size
+                if tag == 'em':
+                    self.found_author = True
                 if tag == 'dd':
                     self.found_comment = True
             else:
@@ -111,8 +116,12 @@ class SimpleAttachmentHTMLParser(HTMLParser):
         return
 
     def handle_data(self, data):
+        if self.found_author:
+            self.attachments[self.current_attachment]['author'] = data.strip()
+            self.found_author = False
         if self.found_comment:
             self.attachments[self.current_attachment]['comment'] = data.strip()
+            self.found_comment = False
         return
 
     def handle_endtag(self, tag):

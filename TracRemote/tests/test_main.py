@@ -11,7 +11,7 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 import unittest
 # from pkg_resources import resource_filename
-from ..main import main_args
+from ..main import main_args, validate_args
 
 
 class TestMain(unittest.TestCase):
@@ -33,3 +33,17 @@ class TestMain(unittest.TestCase):
         self.assertEqual(options.URL, 'http://www.example.com')
         self.assertEqual(options.cmd_name, 'wiki')
         self.assertEqual(options.command, 'list')
+        options = main_args(['http://www.example.com', 'attachment',
+                             'list', 'WikiStart'])
+        self.assertEqual(options.URL, 'http://www.example.com')
+        self.assertEqual(options.cmd_name, 'attachment')
+        self.assertEqual(options.command, 'list')
+        self.assertEqual(options.arguments[0], 'WikiStart')
+
+    def test_validate_args(self):
+        """Test validation of sub-command arguments.
+        """
+        options = main_args(['http://www.example.com', 'wiki', 'list'])
+        self.assertTrue(validate_args(options))
+        options = main_args(['http://www.example.com', 'attachment', 'list'])
+        self.assertFalse(validate_args(options))
