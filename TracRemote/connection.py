@@ -12,7 +12,10 @@ try:
     from http.cookiejar import LWPCookieJar
 except ImportError:
     from cookielib import LWPCookieJar
-from urllib import unquote, urlencode
+try:
+    from urllib.parse import unquote, urlencode
+except ImportError:
+    from urllib import unquote, urlencode
 import urllib2
 from .util import (CRLF, SimpleAttachmentHTMLParser, SimpleIndexHTMLParser,
                    SimpleWikiHTMLParser)
