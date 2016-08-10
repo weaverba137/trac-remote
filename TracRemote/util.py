@@ -13,7 +13,10 @@ try:
     from html.parser import HTMLParser
 except ImportError:
     from HTMLParser import HTMLParser
-from urllib import unquote
+try:
+    from urllib.parse import unquote
+except ImportError:
+    from urllib import unquote
 import re
 
 
