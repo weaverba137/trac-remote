@@ -8,7 +8,10 @@ TracRemote.connection
 Contains a class for establishing and using connections to Trac servers.
 """
 from __future__ import absolute_import
-import cookielib
+try:
+    from http.cookiejar import LWPCookieJar
+except ImportError:
+    from cookielib import LWPCookieJar
 from urllib import unquote, urlencode
 import urllib2
 from .util import (CRLF, SimpleAttachmentHTMLParser, SimpleIndexHTMLParser,
@@ -40,7 +43,7 @@ class Connection(object):
         # Taken from:
         # http://www.voidspace.org.uk/python/articles/cookielib.shtml
         #
-        cj = cookielib.LWPCookieJar()
+        cj = LWPCookieJar()
         self.opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
         # urllib2.install_opener(opener)
         #
