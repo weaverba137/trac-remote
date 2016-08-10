@@ -13,6 +13,8 @@ try:
     from html.parser import HTMLParser
 except ImportError:
     from HTMLParser import HTMLParser
+from urllib import unquote
+import re
 
 
 def CRLF(text):
@@ -38,8 +40,14 @@ def CRLF(text):
 
 
 class SimpleAttachmentHTMLParser(HTMLParser):
-    """Parse an attachment list page
+    """Parse an attachment list page.
+
+    Attributes
+    ----------
+    mtimere : Regular Expression
+        Regular Expression for extracting modification times.
     """
+    mtimere = re.compile(r'/timeline\?from=([0-9T:-]+)&precision=second')
 
     def __init__(self):
         HTMLParser.__init__(self)
@@ -59,15 +67,20 @@ class SimpleAttachmentHTMLParser(HTMLParser):
                     try:
                         if dattrs['title'] == 'View attachment':
                             ca = dattrs['href'].split('/')[-1]
-                            a = {'size': 0, 'mtime': ''}
+                            a = {'size': 0, 'mtime': None}
                             self.current_attachment = ca
                             self.attachments[self.current_attachment] = a
+                        elif dattrs['title'] == 'Download':
+                            # May want to grab this someday.
+                            pass
                         else:
-                            # TODO: fix mtime parsing.
-                            # mtime = dattrs['title'].split(' ')[0]
-                            mtime = dattrs['href']
-                            foo = self.attachments[self.current_attachment]
-                            foo['mtime'] = mtime
+                            # foo = self.attachments[self.current_attachment]
+                            # foo['mtime'] = unquote(dattrs['href'])
+                            m = self.mtimere.match(unquote(dattrs['href']))
+                            if m is not None:
+                                mtime = m.groups()[0]
+                                foo = self.attachments[self.current_attachment]
+                                foo['mtime'] = mtime
                     except KeyError:
                         pass
                 if tag == 'span':

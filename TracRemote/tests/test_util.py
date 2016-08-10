@@ -48,6 +48,10 @@ class TestUtil(unittest.TestCase):
         parser.feed(attach_html)
         at = parser.attachments
         self.assertIn('carigi.apogge2.lr.utah.pdf', at)
+        f = at['carigi.apogge2.lr.utah.pdf']
+        self.assertEqual(f['mtime'], '2014-07-29T06:11:13-06:00')
+        self.assertEqual(f['size'], 4246601)
+        self.assertEqual(f['comment'], 'carigi talk')
 
     def test_index_parser(self):
         """Test TitleIndex parsing.
