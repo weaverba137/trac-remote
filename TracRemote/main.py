@@ -12,6 +12,7 @@ from __future__ import (absolute_import, division, print_function,
 from .connection import Connection
 import os
 
+
 def main_args(args=None):
     """Parse the command-line arguments passed to :func:`main`.
 
@@ -126,13 +127,15 @@ def dispatch(options):
            "{0.realm}, {0.debug})").format(options))
     if options.cmd_name == 'attachment':
         if options.command == 'add':
-            print("c.attach('{0}', '{1}', '{2}', False)".format(*options.arguments))
+            print(("c.attach('{0}', '{1}', '{2}', " +
+                   "False)").format(*options.arguments))
         if options.command == 'export':
             print("c.detach('{0}', '{1}', True)".format(*options.arguments))
         if options.command == 'list':
             print("c.attachments({0})".format(options.arguments[0]))
         if options.command == 'replace':
-            print("c.attach('{0}', '{1}', '{2}', True)".format(*options.arguments))
+            print("c.attach('{0}', '{1}', '{2}', " +
+                  "True)".format(*options.arguments))
     if options.cmd_name == 'wiki':
         if options.command == 'export':
             print("c.get('{0}')".format(*options.arguments))
@@ -142,7 +145,8 @@ def dispatch(options):
             print("c.index()")
         if options.command == 'replace':
             print("c.set('{0}', '{1}', '{2}')".format(*options.arguments))
-    # c = Connection(options.URL, options.password, options.realm, options.debug)
+    # c = Connection(options.URL, options.password, options.realm,
+    #                options.debug)
     return
 
 
