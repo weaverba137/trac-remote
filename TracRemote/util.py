@@ -83,7 +83,7 @@ class SimpleAttachmentHTMLParser(HTMLParser):
                         else:
                             # foo = self.attachments[self.current_attachment]
                             # foo['mtime'] = unquote(dattrs['href'])
-                            m = self.mtimere.match(unquote(dattrs['href']))
+                            m = self.mtimere.search(unquote(dattrs['href']))
                             if m is not None:
                                 mtime = m.groups()[0]
                                 foo = self.attachments[self.current_attachment]
