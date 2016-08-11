@@ -18,6 +18,7 @@ try:
 except ImportError:
     from urllib import unquote
 import re
+from collections import OrderedDict
 
 
 def CRLF(text):
@@ -59,7 +60,7 @@ class SimpleAttachmentHTMLParser(HTMLParser):
         self.found_list = False
         self.found_author = False
         self.found_comment = False
-        self.attachments = dict()
+        self.attachments = OrderedDict()
         self.current_attachment = None
         return
 

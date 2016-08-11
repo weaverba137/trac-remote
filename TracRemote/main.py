@@ -11,6 +11,7 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 from .connection import Connection
 import os
+import sys
 
 
 def main_args(args=None):
@@ -63,7 +64,7 @@ replace <path> [filename] [comment]
     parser.add_argument('-d', '--debug', action='store_true',
                         help='Enable debug output.')
     parser.add_argument('-p', '--password', metavar='FILE',
-                        default=os.path.join(os.environ['HOME'], '.netrc'),
+                        default=None,
                         help=('Read password information from FILE ' +
                               'instead of %(default)s.'))
     parser.add_argument('-r', '--realm', metavar='REALM', default=None,
@@ -123,30 +124,63 @@ def dispatch(options):
     options : :class:`argparse.Namespace`
         Parsed options.
     """
-    print(("c = Connection('{0.URL}', '{0.password}', " +
-           "{0.realm}, {0.debug})").format(options))
+    c = Connection(options.URL, options.password, options.realm,
+                   options.debug)
     if options.cmd_name == 'attachment':
         if options.command == 'add':
-            print(("c.attach('{0}', '{1}', '{2}', " +
-                   "False)").format(*options.arguments))
+            if len(options.arguments) < 3:
+                c.attach(options.arguments[0], options.arguments[1],
+                         replace=False)
+            else:
+                c.attach(options.arguments[0], options.arguments[1],
+                         description=options.arguments[2], replace=False)
         if options.command == 'export':
-            print("c.detach('{0}', '{1}', True)".format(*options.arguments))
+            #
+            # If a destination is specified, we *don't* want detach to save it.
+            #
+            if len(options.arguments) > 2:
+                data = c.detach(options.arguments[0], options.arguments[1],
+                                False)
+                with open(options.arguments[2], 'wb') as f:
+                    f.write(data)
+            else:
+                foo = c.detach(options.arguments[0], options.arguments[1],
+                               True)
         if options.command == 'list':
-            print("c.attachments({0})".format(options.arguments[0]))
+            at = c.attachments(options.arguments[0])
+            for fname in at:
+                print(fname + ("\t{size:d} bytes\t{author}\t{mtime}\t" +
+                               "{comment}").format(**at[fname]))
         if options.command == 'replace':
-            print("c.attach('{0}', '{1}', '{2}', " +
-                  "True)".format(*options.arguments))
+            if len(options.arguments) < 3:
+                c.attach(options.arguments[0], options.arguments[1],
+                         replace=True)
+            else:
+                c.attach(options.arguments[0], options.arguments[1],
+                         description=options.arguments[2], replace=True)
     if options.cmd_name == 'wiki':
         if options.command == 'export':
-            print("c.get('{0}')".format(*options.arguments))
-        if options.command == 'import':
-            print("c.set('{0}', '{1}', '{2}')".format(*options.arguments))
+            text = c.get(options.arguments[0])
+            if len(options.arguments) > 1:
+                with open(options.arguments[1], 'w') as t:
+                    t.write(text)
+            else:
+                print(text)
+        if options.command == 'import' or options.command == 'replace':
+            if len(options.arguments) > 1:
+                if os.path.exists(options.arguments[1]):
+                    with open(options.arguments[1], 'rb') as t:
+                        text = t.read()
+            else:
+                text = sys.stdin.read()
+            if len(options.arguments) > 2:
+                c.set(options.arguments[0], text,
+                      options.arguments[2])
+            else:
+                c.set(options.arguments[0], text)
         if options.command == 'list':
-            print("c.index()")
-        if options.command == 'replace':
-            print("c.set('{0}', '{1}', '{2}')".format(*options.arguments))
-    # c = Connection(options.URL, options.password, options.realm,
-    #                options.debug)
+            title_index = c.index()
+            print("\n".join(title_index)+"\n")
     return
 
 
@@ -164,9 +198,10 @@ def main():
         print(('trac-remote: error: too few or invalid arguments to ' +
                '"{0.cmd_name} {0.command}"').format(options))
         return 1
-    if not os.path.exists(options.password):
-        print('Password file {0} is missing!'.format(options.password))
-        return 2
-    print(options)
+    if options.password is not None:
+        if not os.path.exists(options.password):
+            print('Password file {0} is missing!'.format(options.password))
+            return 2
+    # print(options)
     dispatch(options)
     return 0

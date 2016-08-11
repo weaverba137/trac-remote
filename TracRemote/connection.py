@@ -302,7 +302,7 @@ class Connection(object):
             postdict['replace'] = 'on'
         for k in postdict:
             mime = MIMEText(postdict[k])
-            mime['Content-disposition'] = 'form-data; name="{0}"'.format(k)
+            mime['Content-Disposition'] = 'form-data; name="{0}"'.format(k)
             del mime['MIME-Version']
             del mime['Content-Type']
             del mime['Content-Transfer-Encoding']
@@ -315,7 +315,7 @@ class Connection(object):
         # Create a separate mime section for the file by hand.
         #
         payload = ['--'+postdata.get_boundary()]
-        payload.append(('Content-disposition: form-data; ' +
+        payload.append(('Content-Disposition: form-data; ' +
                         'name="attachment"; ' +
                         'filename="{0}"').format(unquote(fname)))
         payload.append('Content-type: application/octet-stream')
@@ -325,7 +325,7 @@ class Connection(object):
         content_header = (body[0]+body[1]).split(': ')[1]
         if self._debug:
             print(content_header)
-        crlf_body = '\r\n'.join(body[2:len(body)-1] + payload)+'\r\n'
+        crlf_body = '\r\n'.join(body[3:len(body)-2] + payload)+'\r\n'
         if self._debug:
             print(crlf_body)
         #
@@ -372,6 +372,7 @@ class Connection(object):
                 print(auth_string)
             # http.putheader('Authorization', 'Digest '+auth_string)
             headers['Authorization'] = 'Digest ' + auth_string
+        # print("ACTUAL Content-Length: {0:d}".format(len(crlf_body)))
         http.request('POST', extra+"/attachment/wiki/"+pagepath+"/?action=new",
                      crlf_body, headers)
         #
