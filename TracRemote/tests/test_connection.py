@@ -10,6 +10,7 @@ Test the Trac Connection object.
 import unittest
 from ..connection import Connection
 
+
 class TestTop(unittest.TestCase):
     """Test the Trac Connection object.
     """
