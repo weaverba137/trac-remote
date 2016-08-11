@@ -290,7 +290,8 @@ class Connection(object):
         #
         # Create the mime sections to hold the form data
         #
-        postdata = MIMEMultipart('form-data')
+        postdata = MIMEMultipart('form-data',
+                                 boundary='TracRemoteAttachmentBoundary')
         postdict = {'__FORM_TOKEN': self._form_token,
                     'action': 'new',
                     'realm': 'wiki',
@@ -309,6 +310,7 @@ class Connection(object):
             postdata.attach(mime)
         del postdata['MIME-Version']
         body = postdata.as_string().split('\n')
+        body[0] = body[0].replace('"', '')
         if self._debug:
             print(body)
         #
@@ -325,7 +327,7 @@ class Connection(object):
         content_header = (body[0]+body[1]).split(': ')[1]
         if self._debug:
             print(content_header)
-        crlf_body = '\r\n'.join(body[3:len(body)-2] + payload)+'\r\n'
+        crlf_body = '\r\n'.join(body[2:len(body)-2] + payload)+'\r\n'
         if self._debug:
             print(crlf_body)
         #
