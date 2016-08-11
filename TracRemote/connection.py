@@ -310,6 +310,12 @@ class Connection(object):
             postdata.attach(mime)
         del postdata['MIME-Version']
         body = postdata.as_string().split('\n')
+        #
+        # We have to hack the boundary definition because Apache's mod_security
+        # considers " and = to be invalid characters and will reject POST
+        # requests.  To eliminate the = characters we explicitly set the
+        # boundary string above.
+        #
         body[0] = body[0].replace('"', '')
         if self._debug:
             print(body)
