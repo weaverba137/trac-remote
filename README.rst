@@ -25,8 +25,9 @@ Description
 -----------
 
 trac-remote allows command-line manipulation of Trac_ instances,
-similar to trac-admin, but does not require physical, console
-access to the Trac_ data.
+similar to trac-admin_, but does not require physical, console
+access to the Trac_ data.  In other words, trac-admin manipulates *local*
+Trac servers, while trac-remote manipulates *remote* Trac servers.
 
 History
 -------
@@ -39,6 +40,7 @@ the repository is http://github.com/weaverba137/trac-remote .
 .. _Trac: http://trac.edgewall.org
 .. _SDSS-III: http://www.sdss3.org
 .. _`svn repository`: http://www.sdss3.org/dr10/software/products.php
+.. _trac-admin: http://trac.edgewall.org/wiki/TracAdmin
 
 
 License

@@ -79,6 +79,7 @@ class Connection(object):
             self.opener.add_handler(auth_handler)
         response = self.opener.open(self.url + "/login")
         if self._debug:
+            print(response.getcode())
             print(response.info())
         parser.feed(response.read())
         response.close()
@@ -95,6 +96,7 @@ class Connection(object):
             #
             response = self.opener.open(self.url+"/login", urlencode(postdata))
             if self._debug:
+                print(response.getcode())
                 print(response.info())
             response.close()
         self._cookies = list()
