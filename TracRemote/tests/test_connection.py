@@ -34,7 +34,7 @@ password bar
         if not cls.existing_netrc:
             with open(cls.netrc_file, 'w') as n:
                 n.write(cls.netrc_data)
-            os.chmod(cls.netrc_file, stat.S_IRUSR|stat.S_IWUSR)
+            os.chmod(cls.netrc_file, stat.S_IRUSR | stat.S_IWUSR)
         cls.trac = subprocess.Popen(['python', '-m',
                                      'TracRemote.tests.mock_trac_server'],
                                     stdout=subprocess.PIPE,

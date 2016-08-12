@@ -81,7 +81,7 @@ class Connection(object):
         if self._debug:
             print(response.getcode())
             print(response.info())
-        parser.feed(response.read())
+        parser.feed(response.read().decode('utf-8'))
         response.close()
         self._form_token = parser.search_value
         if self._realm is None:
@@ -94,7 +94,8 @@ class Connection(object):
             # login page but before the redirect to the wiki front page.
             # Technically it is obtained in the HTTP headers of the redirect.
             #
-            response = self.opener.open(self.url+"/login", urlencode(postdata))
+            response = self.opener.open(self.url+"/login",
+                                        urlencode(postdata).encode('utf-8'))
             if self._debug:
                 print(response.getcode())
                 print(response.info())
@@ -165,7 +166,7 @@ class Connection(object):
             A list of all Trac wiki pages.
         """
         response = self.opener.open(self.url + "/wiki/TitleIndex")
-        titleindex = response.read()
+        titleindex = response.read().decode('utf-8')
         response.close()
         parser = SimpleIndexHTMLParser()
         parser.feed(titleindex)
