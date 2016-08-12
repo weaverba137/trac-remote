@@ -189,12 +189,8 @@ class Connection(object):
             (CRLF) line endings.
         """
         response = self.opener.open(self.url+"/wiki/"+pagepath+"?format=txt")
-        txt = response.read()
+        txt = response.read().decode('utf-8')
         response.close()
-        # try:
-        #     utxt = unicode(txt,'utf-8')
-        # except UnicodeDecodeError:
-        #     return txt
         return txt
 
     def set(self, pagepath, text, comment=None):
@@ -226,7 +222,7 @@ class Connection(object):
         if self._debug:
             print(urlencode(postdata))
         response = self.opener.open(self.url+"/wiki/"+pagepath,
-                                    urlencode(postdata))
+                                    urlencode(postdata).encode('utf-8'))
         response.close()
         return
 
@@ -246,7 +242,7 @@ class Connection(object):
             If there are no attachments, the dictionary will be empty.
         """
         response = self.opener.open(self.url+"/attachment/wiki/"+pagepath+"/")
-        attachmentindex = response.read()
+        attachmentindex = response.read().decode('utf-8')
         response.close()
         parser = SimpleAttachmentHTMLParser()
         parser.feed(attachmentindex)
@@ -433,6 +429,6 @@ class Connection(object):
         #
         if save:
             ff = unquote(filename)
-            with open(ff, 'w') as f:
+            with open(ff, 'wb') as f:
                 f.write(data)
         return data
