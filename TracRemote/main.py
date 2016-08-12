@@ -123,9 +123,15 @@ def dispatch(options):
     ----------
     options : :class:`argparse.Namespace`
         Parsed options.
+
+    Returns
+    -------
+    :class:`str`
+        Any output from the commands.
     """
     c = Connection(options.URL, options.password, options.realm,
                    options.debug)
+    output = ''
     if options.cmd_name == 'attachment':
         if options.command == 'add':
             if len(options.arguments) < 3:
@@ -149,8 +155,8 @@ def dispatch(options):
         if options.command == 'list':
             at = c.attachments(options.arguments[0])
             for fname in at:
-                print(fname + ("\t{size:d} bytes\t{author}\t{mtime}\t" +
-                               "{comment}").format(**at[fname]))
+                output += (fname + ("\t{size:d} bytes\t{author}\t{mtime}\t" +
+                                    "{comment}").format(**at[fname]))
         if options.command == 'replace':
             if len(options.arguments) < 3:
                 c.attach(options.arguments[0], options.arguments[1],
@@ -165,7 +171,7 @@ def dispatch(options):
                 with open(options.arguments[1], 'w') as t:
                     t.write(text)
             else:
-                print(text)
+                output = text
         if options.command == 'import' or options.command == 'replace':
             if len(options.arguments) > 1:
                 if os.path.exists(options.arguments[1]):
@@ -180,8 +186,8 @@ def dispatch(options):
                 c.set(options.arguments[0], text)
         if options.command == 'list':
             title_index = c.index()
-            print("\n".join(title_index)+"\n")
-    return
+            output = "\n".join(title_index)+"\n"
+    return output
 
 
 def main():
@@ -202,6 +208,7 @@ def main():
         if not os.path.exists(options.password):
             print('Password file {0} is missing!'.format(options.password))
             return 2
-    # print(options)
-    dispatch(options)
+    output = dispatch(options)
+    if output:
+        print(output)
     return 0

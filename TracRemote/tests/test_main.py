@@ -9,22 +9,16 @@ Test functions and classes in the main module.
 """
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
-import unittest
+# import unittest
 # from pkg_resources import resource_filename
-from ..main import main_args, validate_args
+from argparse import Namespace
+from ..main import main_args, validate_args, dispatch
+from .needs_mock import NeedsMock
 
 
-class TestMain(unittest.TestCase):
+class TestMain(NeedsMock):
     """Test functions and classes in the main module.
     """
-
-    @classmethod
-    def setUpClass(cls):
-        pass
-
-    @classmethod
-    def tearDownClass(cls):
-        pass
 
     def test_main_args(self):
         """Test the argument-parsing function.
@@ -47,3 +41,15 @@ class TestMain(unittest.TestCase):
         self.assertTrue(validate_args(options))
         options = main_args(['http://www.example.com', 'attachment', 'list'])
         self.assertFalse(validate_args(options))
+
+    def test_dispatch(self):
+        """Test assignment of commands to connection methods.
+        """
+        base_options = {'URL': 'http://localhost:8888',
+                        'password': None,
+                        'realm': None,
+                        'debug': False}
+        base_options['cmd_name'] = 'wiki'
+        base_options['command'] = 'list'
+        output = dispatch(Namespace(**base_options))
+        self.assertTrue(output.endswith('testRST\n'))
