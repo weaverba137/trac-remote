@@ -70,8 +70,46 @@ password bar
         self.assertEqual(password, 'bar')
 
     def test_index(self):
-        """Test the index method.
+        """Test the index() method.
         """
         ti = self.conn.index()
         self.assertEqual(ti[1], 'AAAS2016')
         self.assertEqual(ti[-1], 'testRST')
+
+    def test_get(self):
+        """Test the get() method.
+        """
+        text = self.conn.get('TestGet')
+        self.assertEqual(text, 'This is a test.\r\n')
+
+    def test_set(self):
+        """Test the set() method.
+        """
+        self.conn.set('TestEdit', 'This is a test.')
+        # self.assertEqual(text, 'This is a test.\r\n')
+
+    def test_attachments(self):
+        """Test the attachments() method.
+        """
+        at = self.conn.attachments('TestAttach')
+        self.assertIn('carigi.apogge2.lr.utah.pdf', at)
+        f = at['carigi.apogge2.lr.utah.pdf']
+        self.assertEqual(f['mtime'], '2014-07-29T06:11:13-06:00')
+        self.assertEqual(f['size'], 4246601)
+        self.assertEqual(f['comment'], 'carigi talk')
+        self.assertEqual(f['author'], 'carigi')
+
+    def test_detach(self):
+        """Test the detach() method.
+        """
+        data_file = os.path.join(os.getcwd(), 'password.txt')
+        data = self.conn.detach('TestDetach', 'password.txt')
+        self.assertEqual(data, 'foo\nbar\n')
+        self.assertTrue(os.path.exists(data_file))
+        with open(data_file, 'rb') as d:
+            df = d.read()
+        self.assertEqual(data, df)
+        os.remove(data_file)
+        data = self.conn.detach('TestDetach', 'password.txt', save=False)
+        self.assertEqual(data, 'foo\nbar\n')
+        self.assertFalse(os.path.exists(data_file))
