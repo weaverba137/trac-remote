@@ -104,12 +104,12 @@ password bar
         """
         data_file = os.path.join(os.getcwd(), 'password.txt')
         data = self.conn.detach('TestDetach', 'password.txt')
-        self.assertEqual(data, 'foo\nbar\n')
+        self.assertEqual(data, 'foo\nbar\n'.encode('utf-8'))
         self.assertTrue(os.path.exists(data_file))
         with open(data_file, 'rb') as d:
             df = d.read()
         self.assertEqual(data, df)
         os.remove(data_file)
         data = self.conn.detach('TestDetach', 'password.txt', save=False)
-        self.assertEqual(data, 'foo\nbar\n')
+        self.assertEqual(data, 'foo\nbar\n'.encode('utf-8'))
         self.assertFalse(os.path.exists(data_file))

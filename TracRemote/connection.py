@@ -209,7 +209,7 @@ class Connection(object):
         if self._debug:
             print(response.info())
         parser = SimpleWikiHTMLParser('version')
-        parser.feed(response.read())
+        parser.feed(response.read().decode('utf-8'))
         response.close()
         postdata = {'__FORM_TOKEN': self._form_token,
                     'from_editor': '1',

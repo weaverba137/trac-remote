@@ -88,7 +88,6 @@ class MockTracHandler(BaseHTTPRequestHandler):
         self.wfile.write(data)
 
 
-
 if __name__ == '__main__':
     httpd = HTTPServer(('', 8888), MockTracHandler)
     httpd.serve_forever()
