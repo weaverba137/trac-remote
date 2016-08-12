@@ -23,7 +23,7 @@ class TestTop(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.url = 'http://localhost:8888'
-        cls.netrc_data = """machine localhost
+        cls.netrc_data = """machine localhost:8888
 login foo
 password bar
 """
