@@ -294,15 +294,19 @@ class Connection(object):
             with open(filename, 'rb') as f:
                 fbytes = f.read()
             fname = basename(filename)
+        #
+        # Filename = None prevents the filename from being set in the
+        # multipart/form-data payload.
+        #
         files = {'attachment': (fname, fbytes, 'application/octet-stream'),
-                 '__FORM_TOKEN': self._form_token,
-                 'action': 'new',
-                 'realm': 'wiki',
-                 'id': pagepath}
+                 '__FORM_TOKEN': (None, self._form_token),
+                 'action': (None, 'new'),
+                 'realm': (None, 'wiki'),
+                 'id': (None, pagepath)}
         if description is not None:
-            files['description'] = description
+            files['description'] = (None, description)
         if replace:
-            files['replace'] = 'on'
+            files['replace'] = (None, 'on')
         # p = r.Request('POST', self.url + "/attachment/wiki/" +
         #               pagepath + "/?action=new", files=files,
         #               cookies=self._cookies)
