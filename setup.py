@@ -4,10 +4,7 @@ from __future__ import absolute_import, division, print_function
 #
 # Standard imports
 #
-import glob
 import os
-import sys
-import re
 #
 # setuptools' sdist command ignores MANIFEST.in
 #
@@ -59,15 +56,12 @@ except ImportError:
 # Treat everything in bin/ except *.rst as a script to be installed.
 #
 setup_keywords['provides'] = [setup_keywords['name']]
-setup_keywords['requires'] = ['Python (>2.7.0)']
-# setup_keywords['install_requires'] = ['Python (>2.7.0)']
-setup_keywords['zip_safe'] = False
-setup_keywords['use_2to3'] = True
+setup_keywords['python_requires'] = '>=2.7'
+setup_keywords['zip_safe'] = True
+setup_keywords['use_2to3'] = False
 setup_keywords['packages'] = find_packages()
-# setup_keywords['package_dir'] = {'':'py'}
 setup_keywords['cmdclass'] = {'sdist': DistutilsSdist}
-setup_keywords['test_suite'] = ('{name}.tests.{name}_test_suite.' +
-                                '{name}_test_suite').format(**setup_keywords)
+setup_keywords['test_suite'] = 'TracRemote.tests.TracRemote_test_suite'
 #
 # Autogenerate command-line scripts.
 #

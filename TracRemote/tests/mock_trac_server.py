@@ -72,6 +72,12 @@ class MockTracHandler(BaseHTTPRequestHandler):
         mime = 'text/plain;charset=utf-8'
         extra_headers = list()
         if self.path == '/login':
+            http_code = 303
+            extra_headers.append(('Set-Cookie', ('trac_auth=' +
+                                                 'f5190f99a4efb5b1677f8230; ' +
+                                                 'httponly; Path=/')))
+            extra_headers.append(('Location',
+                                  'http://localhost:8888/wiki/TestEdit'))
             data = ('This is a test.'+self.CRLF).encode('utf-8')
         elif self.path.startswith('/wiki/TestEdit'):
             data = ('This is a test.'+self.CRLF).encode('utf-8')
