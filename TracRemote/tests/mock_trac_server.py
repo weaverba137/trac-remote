@@ -30,8 +30,8 @@ class MockTracHandler(BaseHTTPRequestHandler):
         mime = 'text/html;charset=utf-8'
         extra_headers = list()
         if self.path == '/login':
-            with open(self.login, 'rb') as l:
-                data = l.read()
+            with open(self.login, 'rb') as l0:
+                data = l0.read()
             extra_headers.append(('Set-Cookie', ('trac_form_token=' +
                                                  'f5190f99a4efb5b1677f8230; ' +
                                                  'httponly; Path=/')))
@@ -39,17 +39,17 @@ class MockTracHandler(BaseHTTPRequestHandler):
                                                  'ThisIsATestSession; ' +
                                                  'httponly; Path=/')))
         elif self.path == '/wiki/TitleIndex':
-            with open(self.index, 'rb') as l:
-                data = l.read()
+            with open(self.index, 'rb') as l1:
+                data = l1.read()
         elif self.path.startswith('/wiki/TestEdit'):
-            with open(self.edit, 'rb') as l:
-                data = l.read()
+            with open(self.edit, 'rb') as l2:
+                data = l2.read()
         elif self.path.startswith('/attachment/wiki/TestAttach'):
-            with open(self.attach, 'rb') as l:
-                data = l.read()
+            with open(self.attach, 'rb') as l3:
+                data = l3.read()
         elif self.path.startswith('/raw-attachment/wiki/TestDetach'):
-            with open(self.passwd, 'rb') as l:
-                data = l.read()
+            with open(self.passwd, 'rb') as l4:
+                data = l4.read()
             mime = 'application/octet-stream'
         elif self.path.startswith('/wiki/TestGet'):
             data = ('This is a test.'+self.CRLF).encode('utf-8')
