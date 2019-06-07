@@ -5,7 +5,7 @@ TracRemote Release Notes
 0.1.0 (unreleased)
 ------------------
 
-* Use requests_ library.
+* Use requests_ library.  No significant changes to the user-visible API.
 
 .. _requests: https://requests.readthedocs.io
 

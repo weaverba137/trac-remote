@@ -294,7 +294,7 @@ class Connection(object):
             with open(filename, 'rb') as f:
                 fbytes = f.read()
             fname = basename(filename)
-        files = {'file': (fname, fbytes),
+        files = {'attachment': (fname, fbytes),
                  '__FORM_TOKEN': self._form_token,
                  'action': 'new',
                  'realm': 'wiki',
