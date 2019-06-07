@@ -7,7 +7,9 @@ TracRemote.connection
 
 Contains a class for establishing and using connections to Trac servers.
 """
-from __future__ import absolute_import, division, print_function, unicode_literals
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
+from os.path import basename
 import requests as r
 # try:
 #     from http.cookiejar import LWPCookieJar
@@ -35,10 +37,10 @@ class Connection(object):
     url : :class:`str`
         The base URL of the Trac server.
     passfile : :class:`str`, optional
-        A file containing username and password.  Overrides ~/.netrc
+        A file containing username and password.  Overrides ~/.netrc.
     realm : :class:`str`, optional
         If the Trac instance uses basic or digest authentication, set this
-        to the authentication realm
+        to the authentication realm.
     debug : :class:`bool`, optional
         If set to ``True``, print more information.
     """
@@ -46,15 +48,6 @@ class Connection(object):
     def __init__(self, url=None, passfile=None, realm=None, debug=False):
         self._realm = realm
         self._debug = debug
-        #
-        # Cookies are necessary to maintain connection during script.
-        #
-        # Taken from:
-        # http://www.voidspace.org.uk/python/articles/cookielib.shtml
-        #
-        # cj = LWPCookieJar()
-        # self.opener = build_opener(HTTPCookieProcessor(cj))
-        # install_opener(opener)
         #
         # Handle login
         #
@@ -70,7 +63,7 @@ class Connection(object):
         if password is None:
             raise ValueError(('Could not find a password for ' +
                               '{0}!').format(self.url))
-        parser = SimpleWikiHTMLParser()
+        # parser = SimpleWikiHTMLParser()
         # if self._realm is not None:
         #     auth_handler = HTTPDigestAuthHandler()
         #     auth_handler.add_password(realm=self._realm,
@@ -78,33 +71,30 @@ class Connection(object):
         #                               user=user,
         #                               passwd=password)
         #     self.opener.add_handler(auth_handler)
-        # response = self.opener.open(self.url + "/login")
         response = r.get(self.url + "/login")
         self._cookies = response.cookies
-        # if self._debug:
-        #     print(response.getcode())
-        #     print(response.info())
-        # parser.feed(response.read().decode('utf-8'))
-        # response.close()
+        if self._debug:
+            print(response.request.headers)
+            print(response.status_code)
+            print(response.headers)
+        assert 'trac_form_token' in self._cookies
         self._form_token = self._cookies['trac_form_token']
-        # self._form_token = parser.search_value
         if self._realm is None:
             postdata = {'user': user,
                         'password': password,
                         '__FORM_TOKEN': self._form_token,
                         'referer': self.url + "/login"}
+            response = r.post(self.url + "/login", data=postdata,
+                              cookies=self._cookies)
+            if self._debug:
+                print(response.request.headers)
+                print(response.status_code)
+                print(response.headers)
             #
             # The cookie named 'trac_auth' is obtained after the POST to the
             # login page but before the redirect to the wiki front page.
             # Technically it is obtained in the HTTP headers of the redirect.
             #
-            # response = self.opener.open(self.url+"/login",
-            #                             urlencode(postdata).encode('utf-8'))
-            # if self._debug:
-            #     print(response.getcode())
-            #     print(response.info())
-            # response.close()
-            response = r.post(self.url + "/login", data=postdata, cookies=self._cookies)
             self._cookies.update(response.history[0].cookies)
         assert 'trac_auth' in self._cookies
         # self._cookies = list()
@@ -172,13 +162,13 @@ class Connection(object):
         index : :class:`list`
             A list of all Trac wiki pages.
         """
-        # response = self.opener.open(self.url + "/wiki/TitleIndex")
         response = r.get(self.url + "/wiki/TitleIndex", cookies=self._cookies)
-        # titleindex = response.read().decode('utf-8')
-        titleindex = response.text
-        # response.close()
+        if self._debug:
+            print(response.request.headers)
+            print(response.status_code)
+            print(response.headers)
         parser = SimpleIndexHTMLParser()
-        parser.feed(titleindex)
+        parser.feed(response.text)
         return parser.TitleIndex
 
     def get(self, pagepath):
@@ -197,12 +187,13 @@ class Connection(object):
             unicode may be warranted. The text may also contain Windows
             (CRLF) line endings.
         """
-        # response = self.opener.open(self.url+"/wiki/"+pagepath+"?format=txt")
-        # txt = response.read().decode('utf-8')
-        # response.close()
-        response = r.get(self.url + "/wiki/" + pagepath + "?format=txt", cookies=self._cookies)
+        response = r.get(self.url + "/wiki/" + pagepath + "?format=txt",
+                         cookies=self._cookies)
+        if self._debug:
+            print(response.request.headers)
+            print(response.status_code)
+            print(response.headers)
         return response.text
-        # return txt
 
     def set(self, pagepath, text, comment=None):
         """Inputs text into the wiki input text box.
@@ -216,12 +207,14 @@ class Connection(object):
         comment : :class:`str`, optional
             A comment on the change.
         """
-        response = self.opener.open(self.url+"/wiki/"+pagepath+"?action=edit")
+        response = r.get(self.url + "/wiki/" + pagepath + "?action=edit",
+                         cookies=self._cookies)
         if self._debug:
-            print(response.info())
+            print(response.request.headers)
+            print(response.status_code)
+            print(response.headers)
         parser = SimpleWikiHTMLParser('version')
-        parser.feed(response.read().decode('utf-8'))
-        response.close()
+        parser.feed(response.text)
         postdata = {'__FORM_TOKEN': self._form_token,
                     'from_editor': '1',
                     'action': 'edit',
@@ -230,11 +223,13 @@ class Connection(object):
                     'text': CRLF(text)}
         if comment is not None:
             postdata['comment'] = CRLF(comment)
+        response = r.post(self.url + "/wiki/" + pagepath,
+                          data=postdata,
+                          cookies=self._cookies)
         if self._debug:
-            print(urlencode(postdata))
-        response = self.opener.open(self.url+"/wiki/"+pagepath,
-                                    urlencode(postdata).encode('utf-8'))
-        response.close()
+            print(response.request.headers)
+            print(response.status_code)
+            print(response.headers)
         return
 
     def attachments(self, pagepath):
@@ -252,11 +247,14 @@ class Connection(object):
             sub-dictionaries that contain the size and mtime of the file.
             If there are no attachments, the dictionary will be empty.
         """
-        response = self.opener.open(self.url+"/attachment/wiki/"+pagepath+"/")
-        attachmentindex = response.read().decode('utf-8')
-        response.close()
+        response = r.get(self.url + "/attachment/wiki/" + pagepath + "/",
+                         cookies=self._cookies)
+        if self._debug:
+            print(response.request.headers)
+            print(response.status_code)
+            print(response.headers)
         parser = SimpleAttachmentHTMLParser()
-        parser.feed(attachmentindex)
+        parser.feed(response.text)
         return parser.attachments
 
     def attach(self, pagepath, filename, description=None, replace=False):
@@ -276,17 +274,16 @@ class Connection(object):
         replace : :class:`bool`, optional
             Set this to ``True`` if the file is replacing an existing file.
         """
-        from email.mime.multipart import MIMEMultipart
-        from email.mime.text import MIMEText
-        from httplib import HTTPConnection, HTTPSConnection
-        from os.path import basename
-        if self._realm is not None:
-            response = self.opener.open(self.url + "/attachment/wiki/" +
-                                        pagepath + "/?action=new")
-            if self._debug:
-                print(response.info())
-                print(response.read())
-            response.close()
+        # from email.mime.multipart import MIMEMultipart
+        # from email.mime.text import MIMEText
+        # from httplib import HTTPConnection, HTTPSConnection
+        # if self._realm is not None:
+        #     response = self.opener.open(self.url + "/attachment/wiki/" +
+        #                                 pagepath + "/?action=new")
+        #     if self._debug:
+        #         print(response.info())
+        #         print(response.read())
+        #     response.close()
         #
         # Read and examine the file
         #
@@ -294,114 +291,28 @@ class Connection(object):
             fname = basename(filename[0])
             fbytes = filename[1]
         else:
-            with open(filename, 'r') as f:
+            with open(filename, 'rb') as f:
                 fbytes = f.read()
             fname = basename(filename)
-        #
-        # Create the mime sections to hold the form data
-        #
-        postdata = MIMEMultipart('form-data',
-                                 boundary='TracRemoteAttachmentBoundary')
-        postdict = {'__FORM_TOKEN': self._form_token,
-                    'action': 'new',
-                    'realm': 'wiki',
-                    'id': pagepath,
-                    }
+        files = {'file': (fname, fbytes),
+                 '__FORM_TOKEN': self._form_token,
+                 'action': 'new',
+                 'realm': 'wiki',
+                 'id': pagepath}
         if description is not None:
-            postdict['description'] = description
+            files['description'] = description
         if replace:
-            postdict['replace'] = 'on'
-        for k in postdict:
-            mime = MIMEText(postdict[k])
-            mime['Content-Disposition'] = 'form-data; name="{0}"'.format(k)
-            del mime['MIME-Version']
-            del mime['Content-Type']
-            del mime['Content-Transfer-Encoding']
-            postdata.attach(mime)
-        del postdata['MIME-Version']
-        body = postdata.as_string().split('\n')
-        #
-        # We have to hack the boundary definition because Apache's mod_security
-        # considers " and = to be invalid characters and will reject POST
-        # requests.  To eliminate the = characters we explicitly set the
-        # boundary string above.
-        #
-        body[0] = body[0].replace('"', '')
-        if self._debug:
-            print(body)
-        #
-        # Create a separate mime section for the file by hand.
-        #
-        payload = ['--'+postdata.get_boundary()]
-        payload.append(('Content-Disposition: form-data; ' +
-                        'name="attachment"; ' +
-                        'filename="{0}"').format(unquote(fname)))
-        payload.append('Content-type: application/octet-stream')
-        payload.append('')
-        payload.append(fbytes)
-        payload.append('--'+postdata.get_boundary()+'--')
-        content_header = (body[0]+body[1]).split(': ')[1]
-        if self._debug:
-            print(content_header)
-        crlf_body = '\r\n'.join(body[2:len(body)-2] + payload)+'\r\n'
-        if self._debug:
-            print(crlf_body)
-        #
-        # Have to use a raw httplib connection becuase urlopen will
-        # try to encode the data as application/x-www-form-urlencoded
-        #
-        if 'https' in self.url:
-            if self._debug:
-                HTTPSConnection.debuglevel = 1
-            hostname = self.url[self.url.index('//')+2:]
-            if hostname.find('/') > 0:
-                foo = hostname.split('/')
-                hostname = foo[0]
-                extra = '/'+'/'.join(foo[1:])
-            else:
-                extra = ''
-            http = HTTPSConnection(hostname)
-        else:
-            if self._debug:
-                HTTPConnection.debuglevel = 1
-            hostname = self.url[self.url.index('//')+2:]
-            if hostname.find('/') > 0:
-                foo = hostname.split('/')
-                hostname = foo[0]
-                extra = '/'+'/'.join(foo[1:])
-            else:
-                extra = ''
-            http = HTTPConnection(hostname)
-        headers = {'Cookie': '; '.join(['='.join(c) for c in self._cookies]),
-                   'Content-Type': content_header}
-        if self._realm is not None:
-            auth_handler = 0
-            while not isinstance(self.opener.handlers[auth_handler],
-                                 HTTPDigestAuthHandler):
-                auth_handler += 1
-            req = Request((self.url + "/attachment/wiki/" + pagepath +
-                           "/?action=new"), 'foo=bar')
-            req_data = {'realm': self._realm,
-                        'nonce': self.opener.handlers[auth_handler].last_nonce,
-                        'qop': 'auth'}
-            auth_string = self.opener.handlers[auth_handler].get_authorization(
-                req, req_data)
-            if self._debug:
-                print(auth_string)
-            # http.putheader('Authorization', 'Digest '+auth_string)
-            headers['Authorization'] = 'Digest ' + auth_string
-        # print("ACTUAL Content-Length: {0:d}".format(len(crlf_body)))
-        http.request('POST', extra+"/attachment/wiki/"+pagepath+"/?action=new",
-                     crlf_body, headers)
+            files['replace'] = 'on'
+        response = r.post(self.url + "/attachment/wiki/" +
+                          pagepath + "/?action=new", files=files,
+                          cookies=self._cookies)
         #
         # If successful, the initial response should be a redirect.
         #
-        response = http.getresponse()
         if self._debug:
-            print(response.getheaders())
-            print(response.status)
-            print(response.read())
-        http.close()
+            print(response.request.headers)
+            print(response.status_code)
+            print(response.headers)
         return
 
     def detach(self, pagepath, filename, save=True):
@@ -410,7 +321,7 @@ class Connection(object):
         Parameters
         ----------
         pagepath : :class:`str`
-            Wiki page to attach to.
+            Wiki page that contains attached file.
         filename : :class:`str`
             Name of the file to read. The name had better match an
             actual attached file!
@@ -423,7 +334,6 @@ class Connection(object):
         :class:`str`
             The raw data read from the file.
         """
-        from os.path import basename
         #
         # Construct url for attachment
         #
@@ -432,14 +342,28 @@ class Connection(object):
         #
         # Get the file
         #
-        response = self.opener.open(fullurl)
-        data = response.read()
-        response.close()
+        response = r.get(fullurl, cookies=self._cookies)
+        if self._debug:
+            print(response.request.headers)
+            print(response.status_code)
+            print(response.headers)
         #
         # Write the file
         #
         if save:
             ff = unquote(filename)
             with open(ff, 'wb') as f:
-                f.write(data)
-        return data
+                f.write(response.content)
+        return response.content
+
+    def close(self):
+        """Close the connection by logging out.
+        """
+        response = r.get(self.url + '/logout', cookies=self._cookies)
+        if self._debug:
+            print(response.request.headers)
+            print(response.status_code)
+            print(response.headers)
+        return
+
+    logout = close

@@ -2,7 +2,14 @@
 TracRemote Release Notes
 ========================
 
-0.0.2 (unreleased)
+0.1.0 (unreleased)
+------------------
+
+* Use requests_ library.
+
+.. _requests: https://requests.readthedocs.io
+
+0.0.2 (2019-06-06)
 ------------------
 
 * Working with standard ``setup.py`` file.
