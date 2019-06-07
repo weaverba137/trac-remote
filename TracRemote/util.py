@@ -152,7 +152,8 @@ class SimpleIndexHTMLParser(HTMLParser):
     def handle_starttag(self, tag, attrs):
         if self.found_h1 is not None:
             if tag == 'a':
-                self.TitleIndex.append(attrs[0][1].replace('/wiki/', ''))
+                i = attrs[0][1].index('/wiki/')
+                self.TitleIndex.append(attrs[0][1][i+6:])
         else:
             if tag == 'h1' or tag == 'div':
                 #
