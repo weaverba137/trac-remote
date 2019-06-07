@@ -11,20 +11,6 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 from os.path import basename
 import requests as r
-# try:
-#     from http.cookiejar import LWPCookieJar
-# except ImportError:
-#     from cookielib import LWPCookieJar
-# try:
-#     from urllib.parse import unquote, urlencode
-# except ImportError:
-#     from urllib import unquote, urlencode
-# try:
-#     from urllib.request import (build_opener, HTTPCookieProcessor,
-#                                 HTTPDigestAuthHandler, Request)
-# except ImportError:
-#     from urllib2 import (build_opener, HTTPCookieProcessor,
-#                          HTTPDigestAuthHandler, Request)
 from .util import (CRLF, SimpleAttachmentHTMLParser, SimpleIndexHTMLParser,
                    SimpleWikiHTMLParser)
 
@@ -63,7 +49,6 @@ class Connection(object):
         if password is None:
             raise ValueError(('Could not find a password for ' +
                               '{0}!').format(self.url))
-        # parser = SimpleWikiHTMLParser()
         # if self._realm is not None:
         #     auth_handler = HTTPDigestAuthHandler()
         #     auth_handler.add_password(realm=self._realm,
@@ -97,13 +82,6 @@ class Connection(object):
             #
             self._cookies.update(response.history[0].cookies)
         assert 'trac_auth' in self._cookies
-        # self._cookies = list()
-        # for cookie in cj:
-        #     if self._debug:
-        #         print(cookie)
-        #     self._cookies.append((cookie.name, cookie.value))
-        #     if cookie.name == 'trac_form_token' and self._form_token is None:
-        #         self._form_token = cookie.value
         return
 
     def _readPassword(self, passfile):
@@ -274,16 +252,6 @@ class Connection(object):
         replace : :class:`bool`, optional
             Set this to ``True`` if the file is replacing an existing file.
         """
-        # from email.mime.multipart import MIMEMultipart
-        # from email.mime.text import MIMEText
-        # from httplib import HTTPConnection, HTTPSConnection
-        # if self._realm is not None:
-        #     response = self.opener.open(self.url + "/attachment/wiki/" +
-        #                                 pagepath + "/?action=new")
-        #     if self._debug:
-        #         print(response.info())
-        #         print(response.read())
-        #     response.close()
         #
         # Read and examine the file
         #
@@ -307,12 +275,6 @@ class Connection(object):
             files['description'] = (None, description)
         if replace:
             files['replace'] = (None, 'on')
-        # p = r.Request('POST', self.url + "/attachment/wiki/" +
-        #               pagepath + "/?action=new", files=files,
-        #               cookies=self._cookies)
-        # prepared = p.prepare()
-        # print(prepared.headers)
-        # print(prepared.body)
         response = r.post(self.url + "/attachment/wiki/" +
                           pagepath + "/?action=new", files=files,
                           cookies=self._cookies)
