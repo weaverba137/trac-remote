@@ -306,7 +306,7 @@ class Connection(object):
         p = r.Request('POST', self.url + "/attachment/wiki/" +
                       pagepath + "/?action=new", files=files,
                       cookies=self._cookies)
-        prepared = r.prepare()
+        prepared = p.prepare()
         print(prepared.headers)
         print(prepared.body)
         # response = r.post(self.url + "/attachment/wiki/" +
