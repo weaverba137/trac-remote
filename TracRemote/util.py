@@ -98,7 +98,8 @@ class SimpleAttachmentHTMLParser(HTMLParser):
                         except ValueError:
                             print(t)
                             size = 0
-                        self.attachments[self.current_attachment]['size'] = size
+                        foo = self.attachments[self.current_attachment]
+                        foo['size'] = size
                     except KeyError:
                         try:
                             c = dattrs['class']
@@ -106,6 +107,11 @@ class SimpleAttachmentHTMLParser(HTMLParser):
                                 self.found_author = True
                         except KeyError:
                             pass
+                if tag == 'em':
+                    #
+                    # Trac 1.0 and older.
+                    #
+                    self.found_author = True
                 if tag == 'dd':
                     self.found_comment = True
             else:
