@@ -30,3 +30,6 @@ htmlcov
 
 # Mac OSX
 .DS_Store
+
+# Hand-made executable
+trac-remote
