@@ -7,21 +7,22 @@ TracRemote.connection
 
 Contains a class for establishing and using connections to Trac servers.
 """
-from __future__ import absolute_import, division, print_function
-try:
-    from http.cookiejar import LWPCookieJar
-except ImportError:
-    from cookielib import LWPCookieJar
-try:
-    from urllib.parse import unquote, urlencode
-except ImportError:
-    from urllib import unquote, urlencode
-try:
-    from urllib.request import (build_opener, HTTPCookieProcessor,
-                                HTTPDigestAuthHandler, Request)
-except ImportError:
-    from urllib2 import (build_opener, HTTPCookieProcessor,
-                         HTTPDigestAuthHandler, Request)
+from __future__ import absolute_import, division, print_function, unicode_literals
+import requests as r
+# try:
+#     from http.cookiejar import LWPCookieJar
+# except ImportError:
+#     from cookielib import LWPCookieJar
+# try:
+#     from urllib.parse import unquote, urlencode
+# except ImportError:
+#     from urllib import unquote, urlencode
+# try:
+#     from urllib.request import (build_opener, HTTPCookieProcessor,
+#                                 HTTPDigestAuthHandler, Request)
+# except ImportError:
+#     from urllib2 import (build_opener, HTTPCookieProcessor,
+#                          HTTPDigestAuthHandler, Request)
 from .util import (CRLF, SimpleAttachmentHTMLParser, SimpleIndexHTMLParser,
                    SimpleWikiHTMLParser)
 
@@ -51,8 +52,8 @@ class Connection(object):
         # Taken from:
         # http://www.voidspace.org.uk/python/articles/cookielib.shtml
         #
-        cj = LWPCookieJar()
-        self.opener = build_opener(HTTPCookieProcessor(cj))
+        # cj = LWPCookieJar()
+        # self.opener = build_opener(HTTPCookieProcessor(cj))
         # install_opener(opener)
         #
         # Handle login
@@ -70,43 +71,49 @@ class Connection(object):
             raise ValueError(('Could not find a password for ' +
                               '{0}!').format(self.url))
         parser = SimpleWikiHTMLParser()
-        if self._realm is not None:
-            auth_handler = HTTPDigestAuthHandler()
-            auth_handler.add_password(realm=self._realm,
-                                      uri=self.url,
-                                      user=user,
-                                      passwd=password)
-            self.opener.add_handler(auth_handler)
-        response = self.opener.open(self.url + "/login")
-        if self._debug:
-            print(response.getcode())
-            print(response.info())
-        parser.feed(response.read().decode('utf-8'))
-        response.close()
-        self._form_token = parser.search_value
+        # if self._realm is not None:
+        #     auth_handler = HTTPDigestAuthHandler()
+        #     auth_handler.add_password(realm=self._realm,
+        #                               uri=self.url,
+        #                               user=user,
+        #                               passwd=password)
+        #     self.opener.add_handler(auth_handler)
+        # response = self.opener.open(self.url + "/login")
+        response = r.get(self.url + "/login")
+        self._cookies = response.cookies
+        # if self._debug:
+        #     print(response.getcode())
+        #     print(response.info())
+        # parser.feed(response.read().decode('utf-8'))
+        # response.close()
+        self._form_token = self._cookies['trac_form_token']
+        # self._form_token = parser.search_value
         if self._realm is None:
             postdata = {'user': user,
                         'password': password,
                         '__FORM_TOKEN': self._form_token,
-                        'referer': ''}
+                        'referer': self.url + "/login"}
             #
             # The cookie named 'trac_auth' is obtained after the POST to the
             # login page but before the redirect to the wiki front page.
             # Technically it is obtained in the HTTP headers of the redirect.
             #
-            response = self.opener.open(self.url+"/login",
-                                        urlencode(postdata).encode('utf-8'))
-            if self._debug:
-                print(response.getcode())
-                print(response.info())
-            response.close()
-        self._cookies = list()
-        for cookie in cj:
-            if self._debug:
-                print(cookie)
-            self._cookies.append((cookie.name, cookie.value))
-            if cookie.name == 'trac_form_token' and self._form_token is None:
-                self._form_token = cookie.value
+            # response = self.opener.open(self.url+"/login",
+            #                             urlencode(postdata).encode('utf-8'))
+            # if self._debug:
+            #     print(response.getcode())
+            #     print(response.info())
+            # response.close()
+            response = r.post(self.url + "/login", data=postdata, cookies=self._cookies)
+            self._cookies.update(response.history[0].cookies)
+        assert 'trac_auth' in self._cookies
+        # self._cookies = list()
+        # for cookie in cj:
+        #     if self._debug:
+        #         print(cookie)
+        #     self._cookies.append((cookie.name, cookie.value))
+        #     if cookie.name == 'trac_form_token' and self._form_token is None:
+        #         self._form_token = cookie.value
         return
 
     def _readPassword(self, passfile):
@@ -165,9 +172,11 @@ class Connection(object):
         index : :class:`list`
             A list of all Trac wiki pages.
         """
-        response = self.opener.open(self.url + "/wiki/TitleIndex")
-        titleindex = response.read().decode('utf-8')
-        response.close()
+        # response = self.opener.open(self.url + "/wiki/TitleIndex")
+        response = r.get(self.url + "/wiki/TitleIndex", cookies=self._cookies)
+        # titleindex = response.read().decode('utf-8')
+        titleindex = response.text
+        # response.close()
         parser = SimpleIndexHTMLParser()
         parser.feed(titleindex)
         return parser.TitleIndex
@@ -188,10 +197,12 @@ class Connection(object):
             unicode may be warranted. The text may also contain Windows
             (CRLF) line endings.
         """
-        response = self.opener.open(self.url+"/wiki/"+pagepath+"?format=txt")
-        txt = response.read().decode('utf-8')
-        response.close()
-        return txt
+        # response = self.opener.open(self.url+"/wiki/"+pagepath+"?format=txt")
+        # txt = response.read().decode('utf-8')
+        # response.close()
+        response = r.get(self.url + "/wiki/" + pagepath + "?format=txt", cookies=self._cookies)
+        return response.text
+        # return txt
 
     def set(self, pagepath, text, comment=None):
         """Inputs text into the wiki input text box.
