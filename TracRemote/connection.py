@@ -303,16 +303,22 @@ class Connection(object):
             files['description'] = description
         if replace:
             files['replace'] = 'on'
-        response = r.post(self.url + "/attachment/wiki/" +
-                          pagepath + "/?action=new", files=files,
-                          cookies=self._cookies)
+        p = r.Request('POST', self.url + "/attachment/wiki/" +
+                      pagepath + "/?action=new", files=files,
+                      cookies=self._cookies)
+        prepared = r.prepare()
+        print(prepared.headers)
+        print(prepared.body)
+        # response = r.post(self.url + "/attachment/wiki/" +
+        #                   pagepath + "/?action=new", files=files,
+        #                   cookies=self._cookies)
         #
         # If successful, the initial response should be a redirect.
         #
-        if self._debug:
-            print(response.request.headers)
-            print(response.status_code)
-            print(response.headers)
+        # if self._debug:
+        #     print(response.request.headers)
+        #     print(response.status_code)
+        #     print(response.headers)
         return
 
     def detach(self, pagepath, filename, save=True):
