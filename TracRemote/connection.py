@@ -57,9 +57,9 @@ class Connection(object):
         foo = self.url.split('/')
         self._baseurl = foo[0] + '//' + foo[2]
         if passfile is None:
-            user, password = self._readPasswordNetrc(self._baseurl)
+            username, password = self._readPasswordNetrc(self._baseurl)
         else:
-            user, password = self._readPassword(passfile)
+            username, password = self._readPassword(passfile)
         if password is None:
             raise ValueError(('Could not find a password for ' +
                               '{0}!').format(self.url))
@@ -68,7 +68,7 @@ class Connection(object):
         #     auth_handler = HTTPDigestAuthHandler()
         #     auth_handler.add_password(realm=self._realm,
         #                               uri=self.url,
-        #                               user=user,
+        #                               user=username,
         #                               passwd=password)
         #     self.opener.add_handler(auth_handler)
         response = r.get(self.url + "/login")
@@ -80,7 +80,7 @@ class Connection(object):
         assert 'trac_form_token' in self._cookies
         self._form_token = self._cookies['trac_form_token']
         if self._realm is None:
-            postdata = {'user': user,
+            postdata = {'username': username,
                         'password': password,
                         '__FORM_TOKEN': self._form_token,
                         'referer': self.url + "/login"}
@@ -120,9 +120,9 @@ class Connection(object):
             A tuple containing the username and password.
         """
         with open(passfile, 'r') as pf:
-            user = (pf.readline()).strip()
+            username = (pf.readline()).strip()
             password = (pf.readline()).strip()
-        return (user, password)
+        return (username, password)
 
     def _readPasswordNetrc(self, url):
         """Read the Trac username and password from a .netrc file.
@@ -149,10 +149,10 @@ class Connection(object):
             foo = hostname.split('/')
             trachost = foo[0]
         try:
-            user, account, password = rc.hosts[trachost]
+            username, account, password = rc.hosts[trachost]
         except KeyError:
             return None
-        return (user, password)
+        return (username, password)
 
     def index(self):
         """Get and parse the TitleIndex page.
