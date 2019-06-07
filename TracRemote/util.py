@@ -92,12 +92,20 @@ class SimpleAttachmentHTMLParser(HTMLParser):
                         pass
                 if tag == 'span':
                     try:
-                        size = int(dattrs['title'].split(' ')[0])
-                    except:
-                        size = 0
-                    self.attachments[self.current_attachment]['size'] = size
-                if tag == 'em':
-                    self.found_author = True
+                        t = dattrs['title']
+                        try:
+                            size = int(t.split(' ')[0])
+                        except ValueError:
+                            print(t)
+                            size = 0
+                        self.attachments[self.current_attachment]['size'] = size
+                    except KeyError:
+                        try:
+                            c = dattrs['class']
+                            if c == 'trac-author':
+                                self.found_author = True
+                        except KeyError:
+                            pass
                 if tag == 'dd':
                     self.found_comment = True
             else:
