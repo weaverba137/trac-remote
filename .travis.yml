@@ -12,22 +12,19 @@ os:
     - linux
     # - osx
 
-# Setting sudo to false opts in to Travis-CI container-based builds.
-sudo: false
-
 # The apt packages below are needed for sphinx builds, which can no longer
 # be installed with sudo apt-get.
 addons:
     apt:
         packages:
             - graphviz
-            - texlive-latex-extra
-            - dvipng
+    #         - texlive-latex-extra
+    #         - dvipng
 
 python:
     - 2.7
-    - 3.4
     - 3.5
+    - 3.6
 
 env:
     global:
@@ -37,6 +34,7 @@ env:
         - MAIN_CMD='python setup.py'
     matrix:
         - SETUP_CMD='egg_info'
+        - SETUP_CMD='bdist_egg'
         - SETUP_CMD='test'
 
 matrix:
@@ -45,29 +43,33 @@ matrix:
 
     # OS X support is still experimental, so don't penalize failuures.
     allow_failures:
-        - os: osx
+        # - os: osx
+        - os: linux
+          python: 2.7
+          env: MAIN_CMD='pycodestyle' SETUP_CMD='--count TracRemote'
 
     include:
 
         # Check for sphinx doc build warnings.
         - os: linux
           python: 2.7
-          env: SETUP_CMD='build_sphinx'
+          env: SETUP_CMD='build_sphinx --warning-is-error'
 
         # Coverage test, pass the results to coveralls.
         - os: linux
           python: 2.7
-          env: MAIN_CMD='coverage' SETUP_CMD='run TracRemote/tests/TracRemote_test_suite.py'
+          env: MAIN_CMD='coverage' SETUP_CMD='run setup.py test'
 
         # Do a PEP8 test
         - os: linux
           python: 2.7
-          env: MAIN_CMD='pep8' SETUP_CMD='--count TracRemote'
+          env: MAIN_CMD='pycodestyle' SETUP_CMD='--count TracRemote'
 
 install:
-    - if [[ $MAIN_CMD == 'pep8' ]]; then pip install pep8; fi
-    - if [[ $SETUP_CMD == 'build_sphinx' ]]; then pip install Sphinx; fi
+    - if [[ $MAIN_CMD == 'pycodestyle' ]]; then pip install pycodestyle; fi
+    - if [[ $SETUP_CMD == build_sphinx* ]]; then pip install Sphinx; fi
     - if [[ $MAIN_CMD == 'coverage' ]]; then pip install coverage coveralls; fi
+    - if [[ $SETUP_CMD == 'test' || $MAIN_CMD == 'coverage' ]]; then pip install requests; fi
     # - pip install -r requirements.txt
 
 script:

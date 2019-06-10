@@ -13,7 +13,7 @@ from ..connection import Connection
 from .needs_mock import NeedsMock
 
 
-class TestTop(NeedsMock):
+class TestConnection(NeedsMock):
     """Test the Trac Connection object.
     """
 

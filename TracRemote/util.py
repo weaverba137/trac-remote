@@ -92,11 +92,25 @@ class SimpleAttachmentHTMLParser(HTMLParser):
                         pass
                 if tag == 'span':
                     try:
-                        size = int(dattrs['title'].split(' ')[0])
-                    except:
-                        size = 0
-                    self.attachments[self.current_attachment]['size'] = size
+                        t = dattrs['title']
+                        try:
+                            size = int(t.split(' ')[0])
+                        except ValueError:
+                            print(t)
+                            size = 0
+                        foo = self.attachments[self.current_attachment]
+                        foo['size'] = size
+                    except KeyError:
+                        try:
+                            c = dattrs['class']
+                            if c == 'trac-author':
+                                self.found_author = True
+                        except KeyError:
+                            pass
                 if tag == 'em':
+                    #
+                    # Trac 1.0 and older.
+                    #
                     self.found_author = True
                 if tag == 'dd':
                     self.found_comment = True
@@ -152,7 +166,8 @@ class SimpleIndexHTMLParser(HTMLParser):
     def handle_starttag(self, tag, attrs):
         if self.found_h1 is not None:
             if tag == 'a':
-                self.TitleIndex.append(attrs[0][1].replace('/wiki/', ''))
+                i = attrs[0][1].index('/wiki/')
+                self.TitleIndex.append(attrs[0][1][i+6:])
         else:
             if tag == 'h1' or tag == 'div':
                 #

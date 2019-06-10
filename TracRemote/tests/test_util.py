@@ -68,8 +68,8 @@ class TestUtil(unittest.TestCase):
     def test_wiki_parser(self):
         """Test wiki parsing.
         """
-        with open(self.login) as l:
-            login_html = l.read()
+        with open(self.login) as login:
+            login_html = login.read()
         parser = SimpleWikiHTMLParser()
         parser.feed(login_html)
         self.assertEqual(parser.search_value, 'f5190f99a4efb5b1677f8230')
