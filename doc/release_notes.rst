@@ -2,7 +2,7 @@
 TracRemote Release Notes
 ========================
 
-0.1.0 (unreleased)
+0.1.0 (2019-06-10)
 ------------------
 
 * Use requests_ library.  No significant changes to the user-visible API
