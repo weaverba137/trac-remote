@@ -1,36 +1,59 @@
+# Compiled files
 *.py[cod]
 
 # C extensions
 *.so
 
-# Sphinx
-doc/api
-doc/_build
+# Other generated files
+*/_version.py
 
 # Packages
 *.egg
 *.egg-info
-dist
-build
+dist/
+build/
 eggs
 parts
+bin/
 var
 sdist
+MANIFEST
 develop-eggs
 .installed.cfg
-MANIFEST
+lib/
+lib64/
+__pycache__
+
+# Sphinx
+_build
+_static
+_generated
+
+# Installer logs
+pip-log.txt
 
 # Unit test / coverage reports
-htmlcov
+htmlcov/
 .coverage
-.pytest_cache
+.tox
+nosetests.xml
+.tmp
 
-# Editor files
+# Translations
+*.mo
+
+# Mr Developer
+.mr.developer.cfg
+.project
+.pydevproject
+
+# Other
 .*.swp
 *~
+.nfs*
 
 # Mac OSX
 .DS_Store
 
-# Hand-made executable
-trac-remote
+# Pytest
+.pytest_cache
