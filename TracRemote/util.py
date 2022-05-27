@@ -7,16 +7,8 @@ TracRemote.util
 
 Utility functions and classes for internal use by the TracRemote package.
 """
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
-try:
-    from html.parser import HTMLParser
-except ImportError:
-    from HTMLParser import HTMLParser
-try:
-    from urllib.parse import unquote
-except ImportError:
-    from urllib import unquote
+from html.parser import HTMLParser
+from urllib.parse import unquote
 import re
 from collections import OrderedDict
 

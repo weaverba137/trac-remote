@@ -23,6 +23,7 @@ MANIFEST
 # Unit test / coverage reports
 htmlcov
 .coverage
+.pytest_cache
 
 # Editor files
 .*.swp

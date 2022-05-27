@@ -1,4 +1,4 @@
-Copyright (c) 2013-2016, Benjamin Alan Weaver <baweaver@lbl.gov>
+Copyright (c) 2013-2022, Benjamin Alan Weaver <benjamin.weaver@noirlab.edu>
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,

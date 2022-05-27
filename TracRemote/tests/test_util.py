@@ -7,8 +7,6 @@ TracRemote.tests.test_util
 
 Test functions and classes in the util module.
 """
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
 import unittest
 from pkg_resources import resource_filename
 from ..util import (CRLF, SimpleAttachmentHTMLParser, SimpleIndexHTMLParser,
