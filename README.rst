@@ -5,19 +5,17 @@ trac-remote
 Status
 ------
 
-.. .. image:: https://img.shields.io/pypi/l/pydl.svg
-..     :target: https://pypi.python.org/pypi/pydl
-..     :alt: License
+|Actions Status| |Coveralls Status| |Documentation Status|
 
-.. image:: https://img.shields.io/travis/weaverba137/trac-remote.svg
-    :target: https://travis-ci.org/weaverba137/trac-remote
-    :alt: Travis Build Status
+.. |Actions Status| image:: https://github.com/weaverba137/trac-remote/workflows/CI/badge.svg
+    :target: https://github.com/weaverba137/trac-remote/actions
+    :alt: GitHub Actions CI Status
 
-.. image:: https://coveralls.io/repos/github/weaverba137/trac-remote/badge.svg?branch=master
-    :target: https://coveralls.io/github/weaverba137/trac-remote?branch=master
+.. |Coveralls Status| image:: https://coveralls.io/repos/github/weaverba137/trac-remote/badge.svg?branch=main
+    :target: https://coveralls.io/github/weaverba137/trac-remote?branch=main
     :alt: Test Coverage Status
 
-.. image:: https://readthedocs.org/projects/trac-remote/badge/?version=latest
+.. |Documentation Status| image:: https://readthedocs.org/projects/trac-remote/badge/?version=latest
     :target: http://trac-remote.readthedocs.io/en/latest/
     :alt: Documentation Status
 
