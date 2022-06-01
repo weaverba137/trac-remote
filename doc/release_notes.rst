@@ -2,10 +2,12 @@
 TracRemote Release Notes
 ========================
 
-0.1.1 (unreleased)
+0.2.0 (unreleased)
 ------------------
 
-* No changes yet.
+* Drop Python 2 support; add GitHub Actions (PR `#2`_).
+
+.. _`#2`: https://github.com/weaverba137/trac-remote/pull/2
 
 0.1.0 (2019-06-10)
 ------------------

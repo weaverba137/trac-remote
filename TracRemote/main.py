@@ -7,11 +7,9 @@ TracRemote.main
 
 Contains entry point for command-line scripts.
 """
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
-from .connection import Connection
 import os
 import sys
+from .connection import Connection
 
 
 def main_args(args=None):

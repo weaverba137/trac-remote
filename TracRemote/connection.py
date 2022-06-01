@@ -7,13 +7,8 @@ TracRemote.connection
 
 Contains a class for establishing and using connections to Trac servers.
 """
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
 from os.path import basename
-try:
-    from urllib.parse import unquote
-except ImportError:
-    from urllib import unquote
+from urllib.parse import unquote
 import requests as r
 from .util import (CRLF, SimpleAttachmentHTMLParser, SimpleIndexHTMLParser,
                    SimpleWikiHTMLParser)

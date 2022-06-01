@@ -11,6 +11,5 @@ Trac_ instances similar to trac-admin_.
 .. _Trac: http://trac.edgewall.org
 .. _trac-admin: http://trac.edgewall.org/wiki/TracAdmin
 """
-from __future__ import absolute_import, unicode_literals
 
-__version__ = '0.1.1.dev78'
+__version__ = '0.2.0.dev78'

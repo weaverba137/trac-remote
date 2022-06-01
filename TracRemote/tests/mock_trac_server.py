@@ -9,10 +9,7 @@ Simulate a Trac server.
 """
 from collections import OrderedDict
 from pkg_resources import resource_filename
-try:
-    from http.server import HTTPServer, BaseHTTPRequestHandler
-except ImportError:
-    from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler
+from http.server import HTTPServer, BaseHTTPRequestHandler
 
 
 class MockTracHandler(BaseHTTPRequestHandler):

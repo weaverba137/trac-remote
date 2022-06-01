@@ -1,77 +1,51 @@
 #!/usr/bin/env python
 # Licensed under a 3-clause BSD style license - see LICENSE.rst
-from __future__ import absolute_import, division, print_function
-#
-# Standard imports
-#
+
+# NOTE: The configuration for the package, including the name, version, and
+# other information are set in the setup.cfg file.
+
 import os
-#
-# setuptools' sdist command ignores MANIFEST.in
-#
-from distutils.command.sdist import sdist as DistutilsSdist
-from setuptools import setup, find_packages
-#
-# Begin setup
-#
-setup_keywords = dict()
-setup_keywords['name'] = 'TracRemote'
-setup_keywords['description'] = ('Allows remote manipulation of Trac ' +
-                                 'servers, similar to trac-admin.')
-setup_keywords['author'] = 'Benjamin Alan Weaver'
-setup_keywords['author_email'] = 'baweaver@lbl.gov'
-setup_keywords['license'] = 'BSD'
-setup_keywords['url'] = 'https://github.com/weaverba137/trac-remote'
-setup_keywords['keywords'] = ['Trac']
-setup_keywords['classifiers'] = [
-    'Development Status :: 3 - Alpha',
-    'Environment :: Console',
-    'Framework :: Trac',
-    'Intended Audience :: System Administrators',
-    'License :: OSI Approved :: BSD License',
-    'Operating System :: OS Independent',
-    'Programming Language :: Python :: 2.7',
-    'Programming Language :: Python :: 3',
-    'Topic :: Internet :: WWW/HTTP :: Site Management'
-    ]
-#
-# Use README.rst as long_description.
-#
-setup_keywords['long_description'] = ''
-if os.path.exists('README.rst'):
-    with open('README.rst') as readme:
-        setup_keywords['long_description'] = readme.read()
-#
-# Get version from __init__.py
-#
-try:
-    from importlib import import_module
-    product = import_module(setup_keywords['name'])
-    setup_keywords['version'] = product.__version__
-except ImportError:
-    setup_keywords['version'] = '0.0.1.dev1'
-#
-# Set other keywords for the setup function.  These are automated, & should
-# be left alone unless you are an expert.
-#
-# Treat everything in bin/ except *.rst as a script to be installed.
-#
-setup_keywords['provides'] = [setup_keywords['name']]
-setup_keywords['python_requires'] = '>=2.7'
-setup_keywords['zip_safe'] = True
-setup_keywords['use_2to3'] = False
-setup_keywords['packages'] = find_packages()
-setup_keywords['cmdclass'] = {'sdist': DistutilsSdist}
-setup_keywords['test_suite'] = 'TracRemote.tests.TracRemote_test_suite'
-#
-# Autogenerate command-line scripts.
-#
-setup_keywords['entry_points'] = {'console_scripts':
-                                  ['trac-remote = TracRemote.main:main']}
-#
-# Add internal data directories.
-#
-setup_keywords['package_data'] = {'TracRemote.tests': ['t/*']}
-#
-# Run setup command.
-#
-setup(**setup_keywords)
+import sys
+from importlib import import_module
+from setuptools import setup
+
+# from extension_helpers import get_extensions
+
+
+# First provide helpful messages if contributors try and run legacy commands
+# for tests or docs.
+
+TEST_HELP = """
+Note: running tests is no longer done using 'python setup.py test'. Instead
+you will need to run:
+
+    pytest
+
+If you don't already have pytest installed, you can install it with:
+
+    pip install pytest
+
+"""
+
+if 'test' in sys.argv:
+    print(TEST_HELP)
+    sys.exit(1)
+
+DOCS_HELP = """
+Note: building the documentation is no longer done using
+'python setup.py build_docs'. Instead you will need to run:
+
+    sphinx-build -W --keep-going -b html doc doc/_build/html
+
+If you don't already have Sphinx installed, you can install it with:
+
+    pip install Sphinx
+
+"""
+
+if 'build_docs' in sys.argv or 'build_sphinx' in sys.argv:
+    print(DOCS_HELP)
+    sys.exit(1)
+
+module = import_module('TracRemote')
+setup(version=module.__version__)
