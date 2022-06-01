@@ -2,7 +2,7 @@
 TracRemote Release Notes
 ========================
 
-0.2.0 (unreleased)
+0.2.0 (2022-06-01)
 ------------------
 
 * Drop Python 2 support; add GitHub Actions (PR `#2`_).

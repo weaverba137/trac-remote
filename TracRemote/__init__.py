@@ -12,4 +12,4 @@ Trac_ instances similar to trac-admin_.
 .. _trac-admin: http://trac.edgewall.org/wiki/TracAdmin
 """
 
-__version__ = '0.2.0.dev78'
+__version__ = '0.2.0'
